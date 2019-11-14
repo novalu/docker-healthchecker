@@ -1,0 +1,47 @@
+{
+  "name": "docker-healthchecker",
+  "version": "0.1.0",
+  "description": "",
+  "main": "dist/mainLib.js",
+  "bin": "dist/mainCli.js",
+  "types": "dist/mainLib.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "start": "node --inspect dist/mainApp.js",
+    "watch": "nodemon --inspect dist/mainApp.js",
+    "bin": "node dist/mainCli.js",
+    "bin-debug": "node --inspect dist/mainCli.js",
+    "prepublish": "npm run build"
+  },
+  "keywords": [],
+  "author": {
+    "name": "",
+    "url": "",
+    "email": ""
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@slack/client": "^5.0.2",
+    "@types/lodash": "^4.14.146",
+    "@types/node": "10.17.5",
+    "@types/yargs": "^13.0.3",
+    "chalk": "^3.0.0",
+    "commander": "^4.0.1",
+    "exec-sh": "^0.3.4",
+    "fs-extra": "^8.1.0",
+    "gulp-run-command": "0.0.9",
+    "inversify": "5.0.1",
+    "lodash": "4.17.15",
+    "moment": "2.24.0",
+    "npm": "6.13.0",
+    "pretty-error": "2.1.1",
+    "reflect-metadata": "0.1.13",
+    "signale": "1.4.0",
+    "typescript": "3.7.2",
+    "validator": "^12.0.0",
+    "yargs": "^14.2.0"
+  },
+  "devDependencies": {
+    "gulp": "3.9.1"
+  }
+}

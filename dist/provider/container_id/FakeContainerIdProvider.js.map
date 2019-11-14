@@ -1,0 +1,1 @@
+{"version":3,"file":"FakeContainerIdProvider.js","sourceRoot":"","sources":["../../../src/provider/container_id/FakeContainerIdProvider.ts"],"names":[],"mappings":";;;;;;;;;;;;;;;;;AACA,yCAAqC;AAGrC,IAAM,uBAAuB,GAA7B,MAAM,uBAAuB;IAEZ,qBAAqB,CAAC,KAAa;;YAC5C,OAAO,EAAE,CAAC;QACd,CAAC;KAAA;CAEJ,CAAA;AANK,uBAAuB;IAD5B,sBAAU,EAAE;GACP,uBAAuB,CAM5B;AAEQ,0DAAuB"}
