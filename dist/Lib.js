@@ -32,11 +32,12 @@ let Lib = class Lib {
         this.containerGetter = containerGetter;
         this.logger = logger;
     }
-    get(images) {
+    get(...images) {
         return __awaiter(this, void 0, void 0, function* () {
             const containers = [];
             for (const image of images) {
-                containers.push(yield this.containerGetter.getContainer(image));
+                const container = yield this.containerGetter.getContainer(image);
+                containers.push(container);
             }
             return containers;
         });

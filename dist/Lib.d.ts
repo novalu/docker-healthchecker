@@ -5,6 +5,6 @@ declare class Lib {
     private containerGetter;
     private logger;
     constructor(containerGetter: ContainerGetter, logger: Logger);
-    get(images: string[]): Promise<Container[]>;
+    get(...images: string[]): Promise<Container[]>;
 }
 export { Lib };

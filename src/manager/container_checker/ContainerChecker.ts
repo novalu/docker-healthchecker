@@ -5,7 +5,6 @@ import {Messenger} from "../messenger/Messenger";
 import lodash from "lodash";
 import {MessageConfig} from "../../model/message_config/MessageConfig";
 import container from "../../di/container";
-import commander from "commander";
 import {LoggerMessenger} from "../messenger/impl/LoggerMessenger";
 import {SlackMessenger} from "../messenger/impl/SlackMessenger";
 import {ConsoleMessenger} from "../messenger/impl/ConsoleMessenger";

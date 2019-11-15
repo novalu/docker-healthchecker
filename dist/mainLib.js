@@ -16,12 +16,12 @@ require("reflect-metadata");
 const container_1 = __importDefault(require("./di/container"));
 const types_1 = __importDefault(require("./di/types"));
 const NoOpLogger_1 = require("./utils/log/impl/NoOpLogger");
-function getStatus(images) {
+function containersHealth(...images) {
     return __awaiter(this, void 0, void 0, function* () {
         container_1.default.bind(types_1.default.Logger).to(NoOpLogger_1.NoOpLogger);
-        const app = container_1.default.get(types_1.default.Lib);
-        return yield app.get(images);
+        const lib = container_1.default.get(types_1.default.Lib);
+        return yield lib.get(...images);
     });
 }
-exports.getStatus = getStatus;
+exports.containersHealth = containersHealth;
 //# sourceMappingURL=mainLib.js.map
