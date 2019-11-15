@@ -18,10 +18,11 @@ class Lib {
         @inject(TYPES.Logger) private logger: Logger
     ) {}
 
-    public async get(images: string[]): Promise<Container[]> {
+    public async get(...images: string[]): Promise<Container[]> {
         const containers = [];
         for (const image of images) {
-            containers.push(await this.containerGetter.getContainer(image));
+            const container = await this.containerGetter.getContainer(image);
+            containers.push(container);
         }
         return containers;
     }

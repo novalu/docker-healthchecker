@@ -10,9 +10,9 @@ import {NoOpLogger} from "./utils/log/impl/NoOpLogger";
 import { Lib } from "./Lib";
 import { Container } from "./model/container/Container";
 
-export async function getStatus(images: string[]): Promise<Container[]> {
+export async function containersHealth(...images: string[]): Promise<Container[]> {
     container.bind<Logger>(TYPES.Logger).to(NoOpLogger);
 
-    const app = container.get<Lib>(TYPES.Lib);
-    return await app.get(images);
+    const lib = container.get<Lib>(TYPES.Lib);
+    return await lib.get(...images);
 }

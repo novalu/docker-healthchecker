@@ -1,7 +1,4 @@
-import path from "path";
-import commander from "commander";
 import yargs from "yargs";
-import validator from "validator";
 import container from "./di/container";
 
 import { inject, injectable } from "inversify";
