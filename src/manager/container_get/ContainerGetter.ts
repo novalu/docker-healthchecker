@@ -5,6 +5,7 @@ import {InspectProvider} from "../../provider/inspect/InspectProvider";
 import {Logger} from "../../utils/log/Logger";
 import { Container } from "../../model/container/Container";
 import {TimeUtils} from "../../utils/TimeUtils";
+import { ContainerState } from "../../model/container_state/ContainerState";
 
 @injectable()
 class ContainerGetter {
@@ -15,22 +16,22 @@ class ContainerGetter {
         @inject(TYPES.Logger) private logger: Logger
     ) {}
 
-    private getHealth(parsedContainer: any): number {
+    private getHealth(parsedContainer: any): ContainerState {
         if (parsedContainer.State.Health) {
             const healthStatus = parsedContainer.State.Health.Status;
             switch (healthStatus) {
                 case "healthy":
-                    return Container.STATUS_RUNNING_HEALTHY;
+                    return ContainerState.RUNNING_HEALTHY;
                     break;
                 case "unhealthy":
-                    return Container.STATUS_RUNNING_UNHEALTHY;
+                    return ContainerState.RUNNING_UNHEALTHY;
                     break;
                 case "starting":
-                    return Container.STATUS_RUNNING_STARTING;
+                    return ContainerState.RUNNING_STARTING;
                     break;
             }
         } else {
-            return Container.STATUS_RUNNING_UNKNOWN;
+            return ContainerState.RUNNING_UNKNOWN;
         }
     }
 
@@ -57,7 +58,7 @@ class ContainerGetter {
         } else {
             this.logger.warn(`Container for image ${image} not found.`);
         }
-        return new Container("n/a", image, Container.STATUS_DOWN, undefined);
+        return new Container("n/a", image, ContainerState.DOWN, undefined);
     }
 
 }

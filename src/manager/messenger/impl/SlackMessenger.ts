@@ -6,6 +6,7 @@ import {IncomingWebhook} from "@slack/webhook";
 import { MessageConfig } from "../../../model/message_config/MessageConfig";
 import { Container } from "../../../model/container/Container";
 import { SlackMessageConfig } from "../../../model/message_config/impl/SlackMessageConfig";
+import * as lodash from "lodash";
 
 @injectable()
 class SlackMessenger implements Messenger {
@@ -18,17 +19,9 @@ class SlackMessenger implements Messenger {
     private createFields(containers: Container[]): any[] {
         const fields = [];
         for (const container of containers) {
-            let healthText;
-            switch (container.health) {
-                case Container.STATUS_RUNNING_STARTING: healthText = "container is starting"; break;
-                case Container.STATUS_RUNNING_HEALTHY: healthText = "container is healthy"; break;
-                case Container.STATUS_RUNNING_UNHEALTHY: healthText = "container is unhealthy"; break;
-                case Container.STATUS_RUNNING_UNKNOWN: healthText = "container health is unknown"; break;
-                case Container.STATUS_DOWN: healthText = "container is down"; break;
-            }
             fields.push({
                 title: container.image,
-                value: healthText,
+                value: `container is ${container.state.text}`,
                 short: false
             })
         }
@@ -38,19 +31,8 @@ class SlackMessenger implements Messenger {
     private createAttachment(containers: Container[]): object {
         const attachment: any = {};
         attachment.fields = this.createFields(containers);
-        let health = Container.STATUS_RUNNING_HEALTHY;
-        for (const container of containers) {
-            health = container.health > health ? container.health : health;
-        }
-        let color;
-        switch (health) {
-            case Container.STATUS_RUNNING_STARTING: color = "#000000"; break;
-            case Container.STATUS_RUNNING_HEALTHY: color = "#2EB886"; break;
-            case Container.STATUS_RUNNING_UNHEALTHY: color = "#FF4454"; break;
-            case Container.STATUS_RUNNING_UNKNOWN: color = "#AAAAAA"; break;
-            case Container.STATUS_DOWN: color = "#FF4454"; break;
-        }
-        attachment.color = color;
+        const downestContainer = lodash.maxBy(containers, (container) => container.state.id);
+        attachment.color = downestContainer.state.color;
         return attachment;
     }
 
