@@ -34,7 +34,7 @@ const ConsoleMessenger_1 = require("../messenger/impl/ConsoleMessenger");
 const LoggerMessageConfig_1 = require("../../model/message_config/impl/LoggerMessageConfig");
 const ConsoleMessageConfig_1 = require("../../model/message_config/impl/ConsoleMessageConfig");
 const SlackMessageConfig_1 = require("../../model/message_config/impl/SlackMessageConfig");
-const Container_1 = require("../../model/container/Container");
+const ContainerState_1 = require("../../model/container_state/ContainerState");
 let ContainerChecker = class ContainerChecker {
     constructor(logger) {
         this.logger = logger;
@@ -55,15 +55,15 @@ let ContainerChecker = class ContainerChecker {
     }
     checkContainers(containers, messageConfigs) {
         return __awaiter(this, void 0, void 0, function* () {
-            const allUp = lodash_1.default.every(containers, (container) => {
-                return container.health === Container_1.Container.STATUS_RUNNING_HEALTHY;
+            const allHealthy = lodash_1.default.every(containers, (container) => {
+                return container.state.id === ContainerState_1.ContainerState.RUNNING_HEALTHY.id;
             });
             for (const messageConfig of messageConfigs) {
                 if (container_1.default.isBound(types_1.default.Messenger))
                     container_1.default.unbind(types_1.default.Messenger);
                 container_1.default.bind(types_1.default.Messenger).to(this.getMessenger(messageConfig));
                 const messenger = container_1.default.get(types_1.default.Messenger);
-                if (!allUp || messageConfig.forceSend) {
+                if (!allHealthy || messageConfig.forceSend) {
                     yield messenger.sendMessage(containers, messageConfig);
                 }
             }

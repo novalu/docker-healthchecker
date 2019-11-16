@@ -6,6 +6,7 @@ import chalk = require("chalk");
 import { MessageConfig } from "../../../model/message_config/MessageConfig";
 import { Container } from "../../../model/container/Container";
 import { LoggerMessageConfig } from "../../../model/message_config/impl/LoggerMessageConfig";
+import { ContainerState } from "../../../model/container_state/ContainerState";
 
 @injectable()
 class LoggerMessenger implements Messenger {
@@ -26,12 +27,12 @@ class LoggerMessenger implements Messenger {
         const line = [];
         for (const container of containers) {
             let healthText;
-            switch (container.health) {
-                case Container.STATUS_RUNNING_STARTING: healthText = "starting"; break;
-                case Container.STATUS_RUNNING_HEALTHY: healthText = this.color("green", "healthy"); break;
-                case Container.STATUS_RUNNING_UNHEALTHY: healthText = this.color("red", "unhealthy"); break;
-                case Container.STATUS_RUNNING_UNKNOWN: healthText = this.color("gray", "unknown"); break;
-                case Container.STATUS_DOWN: healthText = this.color("red", "down"); break;
+            switch (container.state.id) {
+                case ContainerState.RUNNING_STARTING.id: healthText = container.state.text; break;
+                case ContainerState.RUNNING_HEALTHY.id: healthText = this.color("green", container.state.text); break;
+                case ContainerState.RUNNING_UNHEALTHY.id: healthText = this.color("red", container.state.text); break;
+                case ContainerState.RUNNING_UNKNOWN.id: healthText = this.color("gray", container.state.text); break;
+                case ContainerState.DOWN.id: healthText = this.color("red", container.state.text); break;
             }
             line.push(`${container.image}: ${healthText}`);
         }

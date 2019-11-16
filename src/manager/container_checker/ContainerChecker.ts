@@ -12,6 +12,7 @@ import { LoggerMessageConfig } from "../../model/message_config/impl/LoggerMessa
 import { ConsoleMessageConfig } from "../../model/message_config/impl/ConsoleMessageConfig";
 import { SlackMessageConfig } from "../../model/message_config/impl/SlackMessageConfig";
 import { Container } from "../../model/container/Container";
+import { ContainerState } from "../../model/container_state/ContainerState";
 
 @injectable()
 class ContainerChecker {
@@ -33,14 +34,14 @@ class ContainerChecker {
     }
 
     public async checkContainers(containers: Container[], messageConfigs: MessageConfig[]) {
-        const allUp = lodash.every(containers, (container: Container) => {
-            return container.health === Container.STATUS_RUNNING_HEALTHY;
+        const allHealthy = lodash.every(containers, (container: Container) => {
+            return container.state.id === ContainerState.RUNNING_HEALTHY.id;
         });
         for (const messageConfig of messageConfigs) {
             if (container.isBound(TYPES.Messenger)) container.unbind(TYPES.Messenger);
             container.bind<Messenger>(TYPES.Messenger).to(this.getMessenger(messageConfig));
             const messenger = container.get<Messenger>(TYPES.Messenger);
-            if (!allUp || messageConfig.forceSend) {
+            if (!allHealthy || messageConfig.forceSend) {
                 await messenger.sendMessage(containers, messageConfig);
             }
         }

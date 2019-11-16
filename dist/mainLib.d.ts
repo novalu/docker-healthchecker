@@ -1,3 +1,5 @@
 import "reflect-metadata";
 import { Container } from "./model/container/Container";
-export declare function containersHealth(...images: string[]): Promise<Container[]>;
+import { ContainerState } from "./model/container_state/ContainerState";
+declare const containersHealth: (...images: string[]) => Promise<Container[]>;
+export { containersHealth, Container, ContainerState };

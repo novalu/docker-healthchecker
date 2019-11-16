@@ -18,8 +18,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const inversify_1 = require("inversify");
 const types_1 = __importDefault(require("../../../di/types"));
 const chalk = require("chalk");
-const Container_1 = require("../../../model/container/Container");
 const LoggerMessageConfig_1 = require("../../../model/message_config/impl/LoggerMessageConfig");
+const ContainerState_1 = require("../../../model/container_state/ContainerState");
 let LoggerMessenger = class LoggerMessenger {
     constructor(logger) {
         this.logger = logger;
@@ -36,18 +36,21 @@ let LoggerMessenger = class LoggerMessenger {
         const line = [];
         for (const container of containers) {
             let healthText;
-            switch (container.health) {
-                case Container_1.Container.STATUS_RUNNING_STARTING:
-                    healthText = "starting";
+            switch (container.state.id) {
+                case ContainerState_1.ContainerState.RUNNING_STARTING.id:
+                    healthText = container.state.text;
                     break;
-                case Container_1.Container.STATUS_RUNNING_HEALTHY:
-                    healthText = this.color("green", "healthy");
+                case ContainerState_1.ContainerState.RUNNING_HEALTHY.id:
+                    healthText = this.color("green", container.state.text);
                     break;
-                case Container_1.Container.STATUS_RUNNING_UNHEALTHY:
-                    healthText = this.color("red", "unhealthy");
+                case ContainerState_1.ContainerState.RUNNING_UNHEALTHY.id:
+                    healthText = this.color("red", container.state.text);
                     break;
-                case Container_1.Container.STATUS_DOWN:
-                    healthText = this.color("gray", "down");
+                case ContainerState_1.ContainerState.RUNNING_UNKNOWN.id:
+                    healthText = this.color("gray", container.state.text);
+                    break;
+                case ContainerState_1.ContainerState.DOWN.id:
+                    healthText = this.color("red", container.state.text);
                     break;
             }
             line.push(`${container.image}: ${healthText}`);
