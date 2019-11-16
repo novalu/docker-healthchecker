@@ -8,6 +8,7 @@
   "scripts": {
     "build": "tsc",
     "prepare": "npm run build",
+    "app": "node dist/mainApp.js",
     "app-debug": "node --inspect dist/mainApp.js",
     "app-debug-watch": "nodemon --inspect dist/mainApp.js",
     "cli": "node dist/mainCli.js",
@@ -16,32 +17,32 @@
   },
   "keywords": [],
   "author": {
-    "name": "",
-    "url": "",
-    "email": ""
+    "name": "Lukas Novak",
+    "url": "https://www.novaklukas.cz",
+    "email": "novalu@novalu.info"
   },
   "license": "MIT",
   "dependencies": {
     "@slack/client": "^5.0.2",
     "@types/lodash": "^4.14.146",
-    "@types/node": "10.17.5",
+    "@types/node": "^10.17.5",
     "@types/yargs": "^13.0.3",
     "chalk": "^3.0.0",
     "exec-sh": "^0.3.4",
     "fs-extra": "^8.1.0",
-    "gulp-run-command": "0.0.9",
-    "inversify": "5.0.1",
-    "lodash": "4.17.15",
-    "moment": "2.24.0",
-    "npm": "6.13.0",
+    "gulp-run-command": "^0.0.9",
+    "inversify": "^5.0.1",
+    "lodash": "^4.17.15",
+    "moment": "^2.24.0",
+    "npm": "^6.13.0",
     "path": "^0.12.7",
-    "pretty-error": "2.1.1",
-    "reflect-metadata": "0.1.13",
-    "signale": "1.4.0",
-    "typescript": "3.7.2",
+    "pretty-error": "^2.1.1",
+    "reflect-metadata": "^0.1.13",
+    "signale": "^1.4.0",
+    "typescript": "^3.7.2",
     "yargs": "^14.2.0"
   },
   "devDependencies": {
-    "gulp": "3.9.1"
+    "gulp": "^3.9.1"
   }
 }
