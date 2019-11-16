@@ -7,9 +7,10 @@ import PrettyError from "pretty-error";
 import {Cli} from "./Cli";
 import {Logger} from "./utils/log/Logger";
 import {NoOpLogger} from "./utils/log/impl/NoOpLogger";
+import {ConsoleLogger} from "./utils/log/impl/ConsoleLogger";
 
 async function startCli(): Promise<Cli> {
-    container.bind<Logger>(TYPES.Logger).to(NoOpLogger);
+    container.bind<Logger>(TYPES.Logger).to(ConsoleLogger);
 
     const cli = container.get<Cli>(TYPES.Cli);
     const started = await cli.start();

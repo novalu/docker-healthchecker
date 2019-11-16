@@ -9,9 +9,10 @@ import {SignaleLogger} from "./utils/log/impl/SignaleLogger";
 import {NoOpLogger} from "./utils/log/impl/NoOpLogger";
 import { Lib } from "./Lib";
 import { Container } from "./model/container/Container";
+import {ConsoleLogger} from "./utils/log/impl/ConsoleLogger";
 
 export async function containersHealth(...images: string[]): Promise<Container[]> {
-    container.bind<Logger>(TYPES.Logger).to(NoOpLogger);
+    container.bind<Logger>(TYPES.Logger).to(ConsoleLogger);
 
     const lib = container.get<Lib>(TYPES.Lib);
     return await lib.get(...images);

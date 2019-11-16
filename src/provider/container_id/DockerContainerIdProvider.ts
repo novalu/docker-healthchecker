@@ -9,7 +9,7 @@ class DockerContainerIdProvider implements ContainerIdProvider {
         const execShPromise = execSh.promise;
         const result = await execShPromise(`docker ps | grep '${image}' | awk '{ print $1 }'`, true);
         const out = result.stdout.trim();
-        return out;
+        return out === "" ? undefined : out;
     }
 
 }
