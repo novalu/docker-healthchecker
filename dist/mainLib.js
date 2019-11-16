@@ -15,10 +15,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 require("reflect-metadata");
 const container_1 = __importDefault(require("./di/container"));
 const types_1 = __importDefault(require("./di/types"));
-const NoOpLogger_1 = require("./utils/log/impl/NoOpLogger");
+const ConsoleLogger_1 = require("./utils/log/impl/ConsoleLogger");
 function containersHealth(...images) {
     return __awaiter(this, void 0, void 0, function* () {
-        container_1.default.bind(types_1.default.Logger).to(NoOpLogger_1.NoOpLogger);
+        container_1.default.bind(types_1.default.Logger).to(ConsoleLogger_1.ConsoleLogger);
         const lib = container_1.default.get(types_1.default.Lib);
         return yield lib.get(...images);
     });

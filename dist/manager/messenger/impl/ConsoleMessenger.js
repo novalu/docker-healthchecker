@@ -28,13 +28,13 @@ let ConsoleMessenger = class ConsoleMessenger {
         for (const container of containers) {
             let healthText;
             switch (container.health) {
-                case Container_1.Container.STATUS_STARTING:
+                case Container_1.Container.STATUS_RUNNING_STARTING:
                     healthText = "starting";
                     break;
-                case Container_1.Container.STATUS_HEALTHY:
+                case Container_1.Container.STATUS_RUNNING_HEALTHY:
                     healthText = this.color("green", "healthy");
                     break;
-                case Container_1.Container.STATUS_UNHEALTHY:
+                case Container_1.Container.STATUS_RUNNING_UNHEALTHY:
                     healthText = this.color("red", "unhealthy");
                     break;
                 case Container_1.Container.STATUS_DOWN:
