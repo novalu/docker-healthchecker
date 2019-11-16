@@ -7,6 +7,7 @@ declare class ContainerGetter {
     private inspectProvider;
     private logger;
     constructor(containerIdProvider: ContainerIdProvider, inspectProvider: InspectProvider, logger: Logger);
+    private getHealth;
     private getContainerFromInspect;
     getContainer(image: string): Promise<Container>;
 }

@@ -23,7 +23,7 @@ let DockerContainerIdProvider = class DockerContainerIdProvider {
             const execShPromise = execSh.promise;
             const result = yield execShPromise(`docker ps | grep '${image}' | awk '{ print $1 }'`, true);
             const out = result.stdout.trim();
-            return out;
+            return out === "" ? undefined : out;
         });
     }
 };
