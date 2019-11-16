@@ -2,6 +2,7 @@
   "name": "docker-healthchecker",
   "version": "0.3.0",
   "description": "",
+  "repository": "github:novalu/docker-healthchecker",
   "main": "dist/mainLib.js",
   "bin": "dist/mainCli.js",
   "types": "dist/mainLib.d.ts",
