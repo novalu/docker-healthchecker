@@ -23,12 +23,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const inversify_1 = require("inversify");
 const types_1 = __importDefault(require("../../../di/types"));
 const webhook_1 = require("@slack/webhook");
-const Container_1 = require("../../../model/container/Container");
 const SlackMessageConfig_1 = require("../../../model/message_config/impl/SlackMessageConfig");
+const lodash = __importStar(require("lodash"));
 let SlackMessenger = class SlackMessenger {
     constructor(logger) {
         this.logger = logger;
@@ -36,27 +43,9 @@ let SlackMessenger = class SlackMessenger {
     createFields(containers) {
         const fields = [];
         for (const container of containers) {
-            let healthText;
-            switch (container.health) {
-                case Container_1.Container.STATUS_RUNNING_STARTING:
-                    healthText = "container is starting";
-                    break;
-                case Container_1.Container.STATUS_RUNNING_HEALTHY:
-                    healthText = "container is healthy";
-                    break;
-                case Container_1.Container.STATUS_RUNNING_UNHEALTHY:
-                    healthText = "container is unhealthy";
-                    break;
-                case Container_1.Container.STATUS_RUNNING_UNKNOWN:
-                    healthText = "container health is unknown";
-                    break;
-                case Container_1.Container.STATUS_DOWN:
-                    healthText = "container is down";
-                    break;
-            }
             fields.push({
                 title: container.image,
-                value: healthText,
+                value: `container is ${container.state.text}`,
                 short: false
             });
         }
@@ -65,26 +54,8 @@ let SlackMessenger = class SlackMessenger {
     createAttachment(containers) {
         const attachment = {};
         attachment.fields = this.createFields(containers);
-        let health = Container_1.Container.STATUS_RUNNING_HEALTHY;
-        for (const container of containers) {
-            health = container.health > health ? container.health : health;
-        }
-        let color;
-        switch (health) {
-            case Container_1.Container.STATUS_RUNNING_STARTING:
-                color = "#AAA";
-                break;
-            case Container_1.Container.STATUS_RUNNING_HEALTHY:
-                color = "#2eb886";
-                break;
-            case Container_1.Container.STATUS_RUNNING_UNHEALTHY:
-                color = "#ff4454";
-                break;
-            case Container_1.Container.STATUS_DOWN:
-                color = "#000";
-                break;
-        }
-        attachment.color = color;
+        const downestContainer = lodash.maxBy(containers, (container) => container.state.id);
+        attachment.color = downestContainer.state.color;
         return attachment;
     }
     sendMessage(containers, messageConfig) {

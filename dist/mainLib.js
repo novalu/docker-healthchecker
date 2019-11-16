@@ -15,13 +15,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 require("reflect-metadata");
 const container_1 = __importDefault(require("./di/container"));
 const types_1 = __importDefault(require("./di/types"));
+const Container_1 = require("./model/container/Container");
+exports.Container = Container_1.Container;
 const ConsoleLogger_1 = require("./utils/log/impl/ConsoleLogger");
-function containersHealth(...images) {
+const ContainerState_1 = require("./model/container_state/ContainerState");
+exports.ContainerState = ContainerState_1.ContainerState;
+const containersHealth = function containersHealth(...images) {
     return __awaiter(this, void 0, void 0, function* () {
         container_1.default.bind(types_1.default.Logger).to(ConsoleLogger_1.ConsoleLogger);
         const lib = container_1.default.get(types_1.default.Lib);
         return yield lib.get(...images);
     });
-}
+};
 exports.containersHealth = containersHealth;
 //# sourceMappingURL=mainLib.js.map

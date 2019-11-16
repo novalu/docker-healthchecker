@@ -28,6 +28,7 @@ const inversify_1 = require("inversify");
 const types_1 = __importDefault(require("../../di/types"));
 const Container_1 = require("../../model/container/Container");
 const TimeUtils_1 = require("../../utils/TimeUtils");
+const ContainerState_1 = require("../../model/container_state/ContainerState");
 let ContainerGetter = class ContainerGetter {
     constructor(containerIdProvider, inspectProvider, logger) {
         this.containerIdProvider = containerIdProvider;
@@ -39,18 +40,18 @@ let ContainerGetter = class ContainerGetter {
             const healthStatus = parsedContainer.State.Health.Status;
             switch (healthStatus) {
                 case "healthy":
-                    return Container_1.Container.STATUS_RUNNING_HEALTHY;
+                    return ContainerState_1.ContainerState.RUNNING_HEALTHY;
                     break;
                 case "unhealthy":
-                    return Container_1.Container.STATUS_RUNNING_UNHEALTHY;
+                    return ContainerState_1.ContainerState.RUNNING_UNHEALTHY;
                     break;
                 case "starting":
-                    return Container_1.Container.STATUS_RUNNING_STARTING;
+                    return ContainerState_1.ContainerState.RUNNING_STARTING;
                     break;
             }
         }
         else {
-            return Container_1.Container.STATUS_RUNNING_UNKNOWN;
+            return ContainerState_1.ContainerState.RUNNING_UNKNOWN;
         }
     }
     getContainerFromInspect(inspect) {
@@ -78,7 +79,7 @@ let ContainerGetter = class ContainerGetter {
             else {
                 this.logger.warn(`Container for image ${image} not found.`);
             }
-            return new Container_1.Container("n/a", image, Container_1.Container.STATUS_DOWN, undefined);
+            return new Container_1.Container("n/a", image, ContainerState_1.ContainerState.DOWN, undefined);
         });
     }
 };
