@@ -56,7 +56,7 @@ let ContainerChecker = class ContainerChecker {
     checkContainers(containers, messageConfigs) {
         return __awaiter(this, void 0, void 0, function* () {
             const allUp = lodash_1.default.every(containers, (container) => {
-                return container.health === Container_1.Container.STATUS_HEALTHY;
+                return container.health === Container_1.Container.STATUS_RUNNING_HEALTHY;
             });
             for (const messageConfig of messageConfigs) {
                 if (container_1.default.isBound(types_1.default.Messenger))

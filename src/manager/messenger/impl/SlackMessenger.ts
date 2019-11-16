@@ -44,10 +44,11 @@ class SlackMessenger implements Messenger {
         }
         let color;
         switch (health) {
-            case Container.STATUS_RUNNING_STARTING: color = "#AAA"; break;
-            case Container.STATUS_RUNNING_HEALTHY: color = "#2eb886"; break;
-            case Container.STATUS_RUNNING_UNHEALTHY: color = "#ff4454"; break;
-            case Container.STATUS_DOWN: color = "#000"; break;
+            case Container.STATUS_RUNNING_STARTING: color = "#000000"; break;
+            case Container.STATUS_RUNNING_HEALTHY: color = "#2EB886"; break;
+            case Container.STATUS_RUNNING_UNHEALTHY: color = "#FF4454"; break;
+            case Container.STATUS_RUNNING_UNKNOWN: color = "#AAAAAA"; break;
+            case Container.STATUS_DOWN: color = "#FF4454"; break;
         }
         attachment.color = color;
         return attachment;

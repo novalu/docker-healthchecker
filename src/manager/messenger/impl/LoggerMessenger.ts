@@ -30,7 +30,8 @@ class LoggerMessenger implements Messenger {
                 case Container.STATUS_RUNNING_STARTING: healthText = "starting"; break;
                 case Container.STATUS_RUNNING_HEALTHY: healthText = this.color("green", "healthy"); break;
                 case Container.STATUS_RUNNING_UNHEALTHY: healthText = this.color("red", "unhealthy"); break;
-                case Container.STATUS_DOWN: healthText = this.color("gray", "down"); break;
+                case Container.STATUS_RUNNING_UNKNOWN: healthText = this.color("gray", "unknown"); break;
+                case Container.STATUS_DOWN: healthText = this.color("red", "down"); break;
             }
             line.push(`${container.image}: ${healthText}`);
         }

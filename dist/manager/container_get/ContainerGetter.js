@@ -27,31 +27,40 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const inversify_1 = require("inversify");
 const types_1 = __importDefault(require("../../di/types"));
 const Container_1 = require("../../model/container/Container");
+const TimeUtils_1 = require("../../utils/TimeUtils");
 let ContainerGetter = class ContainerGetter {
     constructor(containerIdProvider, inspectProvider, logger) {
         this.containerIdProvider = containerIdProvider;
         this.inspectProvider = inspectProvider;
         this.logger = logger;
     }
-    getContainerFromInspect(inspect) {
-        const parsed = JSON.parse(inspect);
-        const rawContainer = parsed[0];
-        const id = rawContainer.Id.substr(12);
-        const image = rawContainer.Config.Image;
-        const healthStatus = rawContainer.State.Health.Status;
-        let health;
-        switch (healthStatus) {
-            case "healthy":
-                health = Container_1.Container.STATUS_HEALTHY;
-                break;
-            case "unhealthy":
-                health = Container_1.Container.STATUS_UNHEALTHY;
-                break;
-            case "starting":
-                health = Container_1.Container.STATUS_STARTING;
-                break;
+    getHealth(parsedContainer) {
+        if (parsedContainer.State.Health) {
+            const healthStatus = parsedContainer.State.Health.Status;
+            switch (healthStatus) {
+                case "healthy":
+                    return Container_1.Container.STATUS_RUNNING_HEALTHY;
+                    break;
+                case "unhealthy":
+                    return Container_1.Container.STATUS_RUNNING_UNHEALTHY;
+                    break;
+                case "starting":
+                    return Container_1.Container.STATUS_RUNNING_STARTING;
+                    break;
+            }
         }
-        const container = new Container_1.Container(id, image, health);
+        else {
+            return Container_1.Container.STATUS_RUNNING_UNKNOWN;
+        }
+    }
+    getContainerFromInspect(inspect) {
+        const parsedInspect = JSON.parse(inspect);
+        const parsedContainer = parsedInspect[0];
+        const id = parsedContainer.Id.substr(12);
+        const image = parsedContainer.Config.Image;
+        const health = this.getHealth(parsedContainer);
+        const startedAt = TimeUtils_1.TimeUtils.moment(parsedContainer.State.StartedAt);
+        const container = new Container_1.Container(id, image, health, startedAt);
         return container;
     }
     getContainer(image) {
@@ -60,18 +69,16 @@ let ContainerGetter = class ContainerGetter {
             if (containerId !== undefined) {
                 const inspectOutput = yield this.inspectProvider.getInspectForId(containerId);
                 if (inspectOutput !== undefined) {
-                    const container = this.getContainerFromInspect(inspectOutput);
-                    return container;
+                    return this.getContainerFromInspect(inspectOutput);
                 }
                 else {
-                    this.logger.warn(`Cannot get inspect ouput for container from image ${image}`);
-                    return new Container_1.Container("n/a", image, Container_1.Container.STATUS_DOWN);
+                    this.logger.warn(`Cannot inspect container from image ${image}.`);
                 }
             }
             else {
-                this.logger.warn(`Container for image ${image} not found`);
-                return new Container_1.Container("n/a", image, Container_1.Container.STATUS_DOWN);
+                this.logger.warn(`Container for image ${image} not found.`);
             }
+            return new Container_1.Container("n/a", image, Container_1.Container.STATUS_DOWN, undefined);
         });
     }
 };
