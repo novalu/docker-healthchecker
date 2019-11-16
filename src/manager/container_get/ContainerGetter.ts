@@ -4,6 +4,7 @@ import {ContainerIdProvider} from "../../provider/container_id/ContainerIdProvid
 import {InspectProvider} from "../../provider/inspect/InspectProvider";
 import {Logger} from "../../utils/log/Logger";
 import { Container } from "../../model/container/Container";
+import {TimeUtils} from "../../utils/TimeUtils";
 
 @injectable()
 class ContainerGetter {
@@ -14,19 +15,33 @@ class ContainerGetter {
         @inject(TYPES.Logger) private logger: Logger
     ) {}
 
-    private getContainerFromInspect(inspect: string): Container {
-        const parsed = JSON.parse(inspect);
-        const rawContainer = parsed[0];
-        const id = (rawContainer.Id as string).substr(12);
-        const image = rawContainer.Config.Image;
-        const healthStatus = rawContainer.State.Health.Status;
-        let health;
-        switch (healthStatus) {
-            case "healthy": health = Container.STATUS_HEALTHY; break;
-            case "unhealthy": health = Container.STATUS_UNHEALTHY; break;
-            case "starting": health = Container.STATUS_STARTING; break;
+    private getHealth(parsedContainer: any): number {
+        if (parsedContainer.State.Health) {
+            const healthStatus = parsedContainer.State.Health.Status;
+            switch (healthStatus) {
+                case "healthy":
+                    return Container.STATUS_RUNNING_HEALTHY;
+                    break;
+                case "unhealthy":
+                    return Container.STATUS_RUNNING_UNHEALTHY;
+                    break;
+                case "starting":
+                    return Container.STATUS_RUNNING_STARTING;
+                    break;
+            }
+        } else {
+            return Container.STATUS_RUNNING_UNKNOWN;
         }
-        const container = new Container(id, image, health);
+    }
+
+    private getContainerFromInspect(inspect: string): Container {
+        const parsedInspect = JSON.parse(inspect);
+        const parsedContainer = parsedInspect[0];
+        const id = (parsedContainer.Id as string).substr(12);
+        const image = parsedContainer.Config.Image;
+        const health = this.getHealth(parsedContainer);
+        const startedAt = TimeUtils.moment(parsedContainer.State.StartedAt);
+        const container = new Container(id, image, health, startedAt);
         return container;
     }
 
@@ -35,17 +50,14 @@ class ContainerGetter {
         if (containerId !== undefined) {
             const inspectOutput = await this.inspectProvider.getInspectForId(containerId);
             if (inspectOutput !== undefined) {
-                const container = this.getContainerFromInspect(inspectOutput);
-                return container;
+                return this.getContainerFromInspect(inspectOutput);
             } else {
-                this.logger.warn(`Cannot get inspect ouput for container from image ${image}`);
-                return new Container("n/a", image, Container.STATUS_DOWN);
+                this.logger.warn(`Cannot inspect container from image ${image}.`);
             }
         } else {
-            this.logger.warn(`Container for image ${image} not found`);
-            return new Container("n/a", image, Container.STATUS_DOWN);
+            this.logger.warn(`Container for image ${image} not found.`);
         }
-
+        return new Container("n/a", image, Container.STATUS_DOWN, undefined);
     }
 
 }

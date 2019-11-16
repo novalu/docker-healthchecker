@@ -20,9 +20,10 @@ class SlackMessenger implements Messenger {
         for (const container of containers) {
             let healthText;
             switch (container.health) {
-                case Container.STATUS_STARTING: healthText = "container is starting"; break;
-                case Container.STATUS_HEALTHY: healthText = "container is healthy"; break;
-                case Container.STATUS_UNHEALTHY: healthText = "container is unhealthy"; break;
+                case Container.STATUS_RUNNING_STARTING: healthText = "container is starting"; break;
+                case Container.STATUS_RUNNING_HEALTHY: healthText = "container is healthy"; break;
+                case Container.STATUS_RUNNING_UNHEALTHY: healthText = "container is unhealthy"; break;
+                case Container.STATUS_RUNNING_UNKNOWN: healthText = "container health is unknown"; break;
                 case Container.STATUS_DOWN: healthText = "container is down"; break;
             }
             fields.push({
@@ -37,16 +38,16 @@ class SlackMessenger implements Messenger {
     private createAttachment(containers: Container[]): object {
         const attachment: any = {};
         attachment.fields = this.createFields(containers);
-        let health = Container.STATUS_HEALTHY;
+        let health = Container.STATUS_RUNNING_HEALTHY;
         for (const container of containers) {
             health = container.health > health ? container.health : health;
         }
         let color;
         switch (health) {
-            case Container.STATUS_HEALTHY: color = "#2eb886"; break;
+            case Container.STATUS_RUNNING_STARTING: color = "#AAA"; break;
+            case Container.STATUS_RUNNING_HEALTHY: color = "#2eb886"; break;
+            case Container.STATUS_RUNNING_UNHEALTHY: color = "#ff4454"; break;
             case Container.STATUS_DOWN: color = "#000"; break;
-            case Container.STATUS_UNHEALTHY: color = "#ff4454"; break;
-            case Container.STATUS_STARTING: color = "#AAA"; break;
         }
         attachment.color = color;
         return attachment;

@@ -34,7 +34,7 @@ class ContainerChecker {
 
     public async checkContainers(containers: Container[], messageConfigs: MessageConfig[]) {
         const allUp = lodash.every(containers, (container: Container) => {
-            return container.health === Container.STATUS_HEALTHY;
+            return container.health === Container.STATUS_RUNNING_HEALTHY;
         });
         for (const messageConfig of messageConfigs) {
             if (container.isBound(TYPES.Messenger)) container.unbind(TYPES.Messenger);

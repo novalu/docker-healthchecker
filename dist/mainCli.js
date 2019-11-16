@@ -17,10 +17,10 @@ require("reflect-metadata");
 const container_1 = __importDefault(require("./di/container"));
 const types_1 = __importDefault(require("./di/types"));
 const pretty_error_1 = __importDefault(require("pretty-error"));
-const NoOpLogger_1 = require("./utils/log/impl/NoOpLogger");
+const ConsoleLogger_1 = require("./utils/log/impl/ConsoleLogger");
 function startCli() {
     return __awaiter(this, void 0, void 0, function* () {
-        container_1.default.bind(types_1.default.Logger).to(NoOpLogger_1.NoOpLogger);
+        container_1.default.bind(types_1.default.Logger).to(ConsoleLogger_1.ConsoleLogger);
         const cli = container_1.default.get(types_1.default.Cli);
         const started = yield cli.start();
         return started ? cli : undefined;

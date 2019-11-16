@@ -38,14 +38,17 @@ let SlackMessenger = class SlackMessenger {
         for (const container of containers) {
             let healthText;
             switch (container.health) {
-                case Container_1.Container.STATUS_STARTING:
+                case Container_1.Container.STATUS_RUNNING_STARTING:
                     healthText = "container is starting";
                     break;
-                case Container_1.Container.STATUS_HEALTHY:
+                case Container_1.Container.STATUS_RUNNING_HEALTHY:
                     healthText = "container is healthy";
                     break;
-                case Container_1.Container.STATUS_UNHEALTHY:
+                case Container_1.Container.STATUS_RUNNING_UNHEALTHY:
                     healthText = "container is unhealthy";
+                    break;
+                case Container_1.Container.STATUS_RUNNING_UNKNOWN:
+                    healthText = "container health is unknown";
                     break;
                 case Container_1.Container.STATUS_DOWN:
                     healthText = "container is down";
@@ -62,23 +65,23 @@ let SlackMessenger = class SlackMessenger {
     createAttachment(containers) {
         const attachment = {};
         attachment.fields = this.createFields(containers);
-        let health = Container_1.Container.STATUS_HEALTHY;
+        let health = Container_1.Container.STATUS_RUNNING_HEALTHY;
         for (const container of containers) {
             health = container.health > health ? container.health : health;
         }
         let color;
         switch (health) {
-            case Container_1.Container.STATUS_HEALTHY:
+            case Container_1.Container.STATUS_RUNNING_STARTING:
+                color = "#AAA";
+                break;
+            case Container_1.Container.STATUS_RUNNING_HEALTHY:
                 color = "#2eb886";
+                break;
+            case Container_1.Container.STATUS_RUNNING_UNHEALTHY:
+                color = "#ff4454";
                 break;
             case Container_1.Container.STATUS_DOWN:
                 color = "#000";
-                break;
-            case Container_1.Container.STATUS_UNHEALTHY:
-                color = "#ff4454";
-                break;
-            case Container_1.Container.STATUS_STARTING:
-                color = "#AAA";
                 break;
         }
         attachment.color = color;
