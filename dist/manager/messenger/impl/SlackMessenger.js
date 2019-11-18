@@ -23,40 +23,38 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const inversify_1 = require("inversify");
 const types_1 = __importDefault(require("../../../di/types"));
 const webhook_1 = require("@slack/webhook");
 const SlackMessageConfig_1 = require("../../../model/message_config/impl/SlackMessageConfig");
-const lodash = __importStar(require("lodash"));
 let SlackMessenger = class SlackMessenger {
     constructor(logger) {
         this.logger = logger;
     }
-    createFields(containers) {
+    createFields(container) {
         const fields = [];
-        for (const container of containers) {
-            fields.push({
-                title: container.image,
-                value: `container is ${container.state.text}`,
-                short: false
-            });
-        }
+        fields.push({
+            title: "Image",
+            value: container.image,
+            short: true
+        });
+        fields.push({
+            title: "State",
+            value: `container is ${container.state.text}`,
+            short: true
+        });
         return fields;
     }
-    createAttachment(containers) {
-        const attachment = {};
-        attachment.fields = this.createFields(containers);
-        const downestContainer = lodash.maxBy(containers, (container) => container.state.id);
-        attachment.color = downestContainer.state.color;
-        return attachment;
+    createAttachments(containers) {
+        const attachments = [];
+        for (const container of containers) {
+            attachments.push({
+                fields: this.createFields(container),
+                color: container.state.color
+            });
+        }
+        return attachments;
     }
     sendMessage(containers, messageConfig) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -67,7 +65,7 @@ let SlackMessenger = class SlackMessenger {
             const webhook = new webhook_1.IncomingWebhook(slackMessageConfig.webhook);
             yield webhook.send({
                 text: "Container status",
-                attachments: [this.createAttachment(containers)]
+                attachments: this.createAttachments(containers)
             });
             this.logger.info("Message sent");
         });

@@ -6,7 +6,7 @@ declare class SlackMessenger implements Messenger {
     private logger;
     constructor(logger: Logger);
     private createFields;
-    private createAttachment;
+    private createAttachments;
     sendMessage(containers: Container[], messageConfig: MessageConfig): Promise<void>;
 }
 export { SlackMessenger };
