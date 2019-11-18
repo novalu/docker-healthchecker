@@ -1,6 +1,6 @@
 {
   "name": "docker-healthchecker",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "",
   "repository": "github:novalu/docker-healthchecker",
   "main": "dist/mainLib.js",
@@ -8,13 +8,13 @@
   "types": "dist/mainLib.d.ts",
   "scripts": {
     "build": "tsc",
-    "prepare": "npm run build",
     "app": "node dist/mainApp.js",
     "app-debug": "node --inspect dist/mainApp.js",
     "app-debug-watch": "nodemon --inspect dist/mainApp.js",
     "cli": "node dist/mainCli.js",
     "cli-debug": "node --inspect dist/mainCli.js",
-    "cli-debug-watch": "nodemon --inspect dist/mainCli.js"
+    "cli-debug-watch": "nodemon --inspect dist/mainCli.js",
+    "prepublishOnly": "npm run build"
   },
   "keywords": [],
   "author": {

@@ -16,24 +16,30 @@ class SlackMessenger implements Messenger {
     ) {
     }
 
-    private createFields(containers: Container[]): any[] {
+    private createFields(container: Container): any[] {
         const fields = [];
-        for (const container of containers) {
-            fields.push({
-                title: container.image,
-                value: `container is ${container.state.text}`,
-                short: false
-            })
-        }
+        fields.push({
+            title: "Image",
+            value: container.image,
+            short: true
+        });
+        fields.push({
+            title: "State",
+            value: `container is ${container.state.text}`,
+            short: true
+        })
         return fields;
     }
 
-    private createAttachment(containers: Container[]): object {
-        const attachment: any = {};
-        attachment.fields = this.createFields(containers);
-        const downestContainer = lodash.maxBy(containers, (container) => container.state.id);
-        attachment.color = downestContainer.state.color;
-        return attachment;
+    private createAttachments(containers: Container[]): object[] {
+        const attachments: any[] = [];
+        for (const container of containers) {
+            attachments.push({
+                fields: this.createFields(container),
+                color: container.state.color
+            })
+        }
+        return attachments;
     }
 
     public async sendMessage(containers: Container[], messageConfig: MessageConfig) {
@@ -44,7 +50,7 @@ class SlackMessenger implements Messenger {
         const webhook = new IncomingWebhook(slackMessageConfig.webhook);
         await webhook.send({
             text: "Container status",
-            attachments: [ this.createAttachment(containers) ]
+            attachments: this.createAttachments(containers)
         });
         this.logger.info("Message sent");
     }
