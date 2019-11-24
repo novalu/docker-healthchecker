@@ -1,4 +1,4 @@
-import {ContainerRequest} from "./ContainerRequest";
+import { ContainerRequest } from "./ContainerRequest";
 
 class Configuration {
     constructor(
