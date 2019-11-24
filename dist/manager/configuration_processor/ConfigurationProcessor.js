@@ -35,9 +35,9 @@ const inversify_1 = require("inversify");
 const ContainerGetter_1 = require("../container_get/ContainerGetter");
 const types_1 = __importDefault(require("../../di/types"));
 const fs = __importStar(require("fs-extra"));
-const ContainerRequest_1 = require("../../model/configuration/ContainerRequest");
 const validator_1 = __importDefault(require("validator"));
 const joi_1 = __importDefault(require("@hapi/joi"));
+const ContainerRequest_1 = require("../../model/configuration/ContainerRequest");
 let ConfigurationProcessor = class ConfigurationProcessor {
     constructor(containerGetter, logger) {
         this.containerGetter = containerGetter;
@@ -53,7 +53,6 @@ let ConfigurationProcessor = class ConfigurationProcessor {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
             const images = [];
-            console.log(process.cwd());
             const exists = yield fs.pathExists(imagesFile);
             if (exists) {
                 const stat = yield fs.stat(imagesFile);
@@ -97,7 +96,7 @@ let ConfigurationProcessor = class ConfigurationProcessor {
             if (imagesResult.error) {
                 throw new Error("Provided images are not valid");
             }
-            const images = (_a = configuration.images, (_a !== null && _a !== void 0 ? _a : []));
+            const images = [...(_a = configuration.images, (_a !== null && _a !== void 0 ? _a : []))];
             if (configuration.imagesFile) {
                 images.push(...(yield this.processImagesFile(configuration.imagesFile)));
             }
