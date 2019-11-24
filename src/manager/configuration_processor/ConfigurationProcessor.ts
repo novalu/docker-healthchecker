@@ -28,11 +28,11 @@ class ConfigurationProcessor {
     private async processImagesFile(imagesFile: string): Promise<string[]> {
         const images = [];
         console.log(process.cwd());
-        const exists = await fs.pathExists(path.join(process.cwd(), imagesFile));
+        const exists = await fs.pathExists(imagesFile);
         if (exists) {
             const stat = await fs.stat(imagesFile);
             if (stat.isFile()) {
-                const contents = (await fs.readFile(path.join(process.cwd(), imagesFile))).toString();
+                const contents = (await fs.readFile(imagesFile)).toString();
                 const isJson = validator.isJSON(contents);
                 if (isJson) {
                     const imagesDef = JSON.parse(contents);
@@ -62,6 +62,7 @@ class ConfigurationProcessor {
 
     public async processConfig(configuration: Configuration): Promise<Container[]> {
         const containers = [];
+        console.log(configuration.images);
         const imagesResult = Joi.array().items(Joi.string()).validate(configuration.images);
         if (imagesResult.error) {
             throw new Error("Provided images are not valid");

@@ -32,7 +32,6 @@ class Cli {
             .describe("image", "Docker image to check. Could be defined more times.")
             .array("image")
             .string("image")
-
             .describe("images-def", "JSON file with image definition in format [{image: string, alias: string}, ...]")
             .string("images-def")
 
