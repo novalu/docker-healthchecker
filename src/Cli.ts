@@ -11,12 +11,14 @@ import {ContainerGetter} from "./manager/container_get/ContainerGetter";
 import {ContainerChecker} from "./manager/container_checker/ContainerChecker";
 import { ConsoleMessageConfig } from "./model/message_config/impl/ConsoleMessageConfig";
 import { SlackMessageConfig } from "./model/message_config/impl/SlackMessageConfig";
+import {ConfigurationProcessor} from "./manager/configuration_processor/ConfigurationProcessor";
+import {Configuration} from "./model/configuration/Configuration";
 
 @injectable()
 class Cli {
     constructor(
-        @inject(TYPES.ContainerGetter) private containerGetter: ContainerGetter,
         @inject(TYPES.ContainerChecker) private containerChecker: ContainerChecker,
+        @inject(TYPES.ConfigurationProcessor) private configurationProcessor: ConfigurationProcessor,
         @inject(TYPES.Logger) private logger: Logger
     ) {}
 
@@ -25,17 +27,20 @@ class Cli {
             .help("h")
             .alias("h", "help")
 
-            .group("image", "Main:")
+            .group("image", "Images:")
             .alias("i", "image")
             .describe("image", "Docker image to check. Could be defined more times.")
             .array("image")
-            .demandOption("image", "At least one image is required")
+            .string("image")
+
+            .describe("images-def", "JSON file with image definition in format [{image: string, alias: string}, ...]")
+            .string("images-def")
 
             .group(["console-enabled", "console-force"], "Console output:")
             .describe("console-enabled", "Whether program should output to console")
             .describe("console-force", "Whether program should output even if containers are up")
 
-            .group(["slack-enabled", "slack-webhook", "slack-force"], "Slack notify:")
+            .group(["slack-enabled", "slack-webhook", "slack-force"], "Slack notification:")
             .describe("slack-enabled", "Whether program should send output to Slack")
             .describe("slack-webhook", "If slack output is enabled, define the Slack webhook URL")
             .implies("slack-enabled", "slack-webhook")
@@ -51,11 +56,11 @@ class Cli {
 
         // console.log(JSON.stringify(argv));
 
-        const images = argv.image as string[];
-        const containers = [];
-        for (const image of images) {
-            containers.push(await this.containerGetter.getContainer(image));
-        }
+        const configuration = new Configuration(
+            argv.image as string[],
+            argv.imagesDef as string
+        );
+        const containers = await this.configurationProcessor.processConfig(configuration);
 
         const messageConfigs = [];
         if (argv.consoleEnabled !== undefined && argv.consoleEnabled as boolean) {

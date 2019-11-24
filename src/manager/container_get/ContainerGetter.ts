@@ -6,6 +6,7 @@ import {Logger} from "../../utils/log/Logger";
 import { Container } from "../../model/container/Container";
 import {TimeUtils} from "../../utils/TimeUtils";
 import { ContainerState } from "../../model/container_state/ContainerState";
+import {ContainerRequest} from "../../model/configuration/ContainerRequest";
 
 @injectable()
 class ContainerGetter {
@@ -35,30 +36,31 @@ class ContainerGetter {
         }
     }
 
-    private getContainerFromInspect(inspect: string): Container {
+    private getContainerFromInspect(inspect: string, image: string, alias: string): Container {
         const parsedInspect = JSON.parse(inspect);
         const parsedContainer = parsedInspect[0];
         const id = (parsedContainer.Id as string).substr(12);
-        const image = parsedContainer.Config.Image;
         const health = this.getHealth(parsedContainer);
         const startedAt = TimeUtils.moment(parsedContainer.State.StartedAt);
-        const container = new Container(id, image, health, startedAt);
+        const container = new Container(id, image, alias, health, startedAt);
         return container;
     }
 
-    public async getContainer(image: string): Promise<Container> {
+    public async getContainer(container: ContainerRequest | string): Promise<Container> {
+        const image = container instanceof ContainerRequest ? container.image : container;
+        const alias = container instanceof ContainerRequest ? container.alias : container;
         const containerId = await this.containerIdProvider.getContainerIdByImage(image);
         if (containerId !== undefined) {
             const inspectOutput = await this.inspectProvider.getInspectForId(containerId);
             if (inspectOutput !== undefined) {
-                return this.getContainerFromInspect(inspectOutput);
+                return this.getContainerFromInspect(inspectOutput, image, alias);
             } else {
                 this.logger.warn(`Cannot inspect container from image ${image}.`);
             }
         } else {
             this.logger.warn(`Container for image ${image} not found.`);
         }
-        return new Container("n/a", image, ContainerState.DOWN, undefined);
+        return new Container("n/a", image, alias, ContainerState.DOWN, undefined);
     }
 
 }

@@ -26,28 +26,24 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const inversify_1 = require("inversify");
 const types_1 = __importDefault(require("./di/types"));
-const ContainerGetter_1 = require("./manager/container_get/ContainerGetter");
+const ConfigurationProcessor_1 = require("./manager/configuration_processor/ConfigurationProcessor");
 let Lib = class Lib {
-    constructor(containerGetter, logger) {
-        this.containerGetter = containerGetter;
+    constructor(configurationProcessor, logger) {
+        this.configurationProcessor = configurationProcessor;
         this.logger = logger;
     }
-    get(...images) {
+    get(configuration) {
         return __awaiter(this, void 0, void 0, function* () {
-            const containers = [];
-            for (const image of images) {
-                const container = yield this.containerGetter.getContainer(image);
-                containers.push(container);
-            }
+            const containers = yield this.configurationProcessor.processConfig(configuration);
             return containers;
         });
     }
 };
 Lib = __decorate([
     inversify_1.injectable(),
-    __param(0, inversify_1.inject(types_1.default.ContainerGetter)),
+    __param(0, inversify_1.inject(types_1.default.ConfigurationProcessor)),
     __param(1, inversify_1.inject(types_1.default.Logger)),
-    __metadata("design:paramtypes", [ContainerGetter_1.ContainerGetter, Object])
+    __metadata("design:paramtypes", [ConfigurationProcessor_1.ConfigurationProcessor, Object])
 ], Lib);
 exports.Lib = Lib;
 //# sourceMappingURL=Lib.js.map

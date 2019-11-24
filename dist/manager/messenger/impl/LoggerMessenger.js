@@ -53,7 +53,7 @@ let LoggerMessenger = class LoggerMessenger {
                     healthText = this.color("red", container.state.text);
                     break;
             }
-            line.push(`${container.image}: ${healthText}`);
+            line.push(`${container.alias}: ${healthText}`);
         }
         return line.join("\n");
     }

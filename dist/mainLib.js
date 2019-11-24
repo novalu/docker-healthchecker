@@ -20,11 +20,13 @@ exports.Container = Container_1.Container;
 const ConsoleLogger_1 = require("./utils/log/impl/ConsoleLogger");
 const ContainerState_1 = require("./model/container_state/ContainerState");
 exports.ContainerState = ContainerState_1.ContainerState;
-const containersHealth = function containersHealth(...images) {
+const Configuration_1 = require("./model/configuration/Configuration");
+exports.Configuration = Configuration_1.Configuration;
+const containersHealth = function containersHealth(configuration) {
     return __awaiter(this, void 0, void 0, function* () {
         container_1.default.bind(types_1.default.Logger).to(ConsoleLogger_1.ConsoleLogger);
         const lib = container_1.default.get(types_1.default.Lib);
-        return yield lib.get(...images);
+        return yield lib.get(configuration);
     });
 };
 exports.containersHealth = containersHealth;

@@ -9,23 +9,23 @@ import container from "./di/container";
 import {NoOpLogger} from "./utils/log/impl/NoOpLogger";
 import {SignaleLogger} from "./utils/log/impl/SignaleLogger";
 import { LoggerMessageConfig } from "./model/message_config/impl/LoggerMessageConfig";
+import {Configuration} from "./model/configuration/Configuration";
+import {ConfigurationProcessor} from "./manager/configuration_processor/ConfigurationProcessor";
 
 @injectable()
 class App {
 
     constructor(
-        @inject(TYPES.ContainerGetter) private containerGetter: ContainerGetter,
         @inject(TYPES.ContainerChecker) private containerChecker: ContainerChecker,
         @inject(TYPES.ContainerIdProvider) private containerIdProvider: ContainerIdProvider,
         @inject(TYPES.InspectProvider) private inspectProvider: InspectProvider,
+        @inject(TYPES.ConfigurationProcessor) private configurationProcessor: ConfigurationProcessor,
         @inject(TYPES.Logger) private logger: Logger
     ) {}
 
-    public async start(images: string[]): Promise<boolean> {
-        const containers = [];
-        for (const image of images) {
-            containers.push(await this.containerGetter.getContainer(image));
-        }
+    public async start(configuration: Configuration): Promise<boolean> {
+        const containers = await this.configurationProcessor.processConfig(configuration);
+
         const messageConfigs = [ new LoggerMessageConfig(true) ];
         this.containerChecker.checkContainers(containers, messageConfigs);
 

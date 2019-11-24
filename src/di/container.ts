@@ -16,6 +16,7 @@ import {DockerContainerIdProvider} from "../provider/container_id/DockerContaine
 import {DockerInspectProvider} from "../provider/inspect/DockerInspectProvider";
 import {Cli} from "../Cli";
 import { Lib } from "../Lib";
+import {ConfigurationProcessor} from "../manager/configuration_processor/ConfigurationProcessor";
 
 const container = new Container();
 
@@ -41,6 +42,10 @@ container
     .to(DockerInspectProvider)
     .inSingletonScope();
 
+container
+    .bind<ConfigurationProcessor>(TYPES.ConfigurationProcessor)
+    .to(ConfigurationProcessor)
+    .inSingletonScope();
 container
     .bind<ContainerChecker>(TYPES.ContainerChecker)
     .to(ContainerChecker)
