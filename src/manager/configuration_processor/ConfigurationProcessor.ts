@@ -1,14 +1,14 @@
 import {inject, injectable} from "inversify";
 import {Container} from "../../model/container/Container";
-import {Configuration} from "../../model/configuration/Configuration";
 import {ContainerGetter} from "../container_get/ContainerGetter";
 import TYPES from "../../di/types";
 import * as fs from "fs-extra";
-import {ContainerRequest} from "../../model/configuration/ContainerRequest";
 import validator from "validator";
 import Joi from "@hapi/joi";
 import {Logger} from "../../utils/log/Logger";
 import path from "path";
+import { ContainerRequest } from "../../model/configuration/ContainerRequest";
+import { Configuration } from "../../model/configuration/Configuration";
 
 @injectable()
 class ConfigurationProcessor {
@@ -27,7 +27,6 @@ class ConfigurationProcessor {
 
     private async processImagesFile(imagesFile: string): Promise<string[]> {
         const images = [];
-        console.log(process.cwd());
         const exists = await fs.pathExists(imagesFile);
         if (exists) {
             const stat = await fs.stat(imagesFile);
@@ -67,7 +66,7 @@ class ConfigurationProcessor {
         if (imagesResult.error) {
             throw new Error("Provided images are not valid");
         }
-        const images = configuration.images ?? [];
+        const images = [...(configuration.images ?? [])];
         if (configuration.imagesFile) {
             images.push(...(await this.processImagesFile(configuration.imagesFile)));
         }

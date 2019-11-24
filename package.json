@@ -1,6 +1,6 @@
 {
   "name": "docker-healthchecker",
-  "version": "0.6.2",
+  "version": "0.6.3",
   "description": "",
   "repository": "github:novalu/docker-healthchecker",
   "main": "dist/mainLib.js",
