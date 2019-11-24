@@ -12,6 +12,7 @@ const DockerContainerIdProvider_1 = require("../provider/container_id/DockerCont
 const DockerInspectProvider_1 = require("../provider/inspect/DockerInspectProvider");
 const Cli_1 = require("../Cli");
 const Lib_1 = require("../Lib");
+const ConfigurationProcessor_1 = require("../manager/configuration_processor/ConfigurationProcessor");
 const container = new inversify_1.Container();
 container
     .bind(types_1.default.App)
@@ -32,6 +33,10 @@ container
 container
     .bind(types_1.default.InspectProvider)
     .to(DockerInspectProvider_1.DockerInspectProvider)
+    .inSingletonScope();
+container
+    .bind(types_1.default.ConfigurationProcessor)
+    .to(ConfigurationProcessor_1.ConfigurationProcessor)
     .inSingletonScope();
 container
     .bind(types_1.default.ContainerChecker)

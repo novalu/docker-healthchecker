@@ -6,6 +6,7 @@ const TYPES = {
     Lib: Symbol("Lib"),
     ContainerIdProvider: Symbol("ContainerIdProvider"),
     InspectProvider: Symbol("InspectProvider"),
+    ConfigurationProcessor: Symbol("ConfigurationProcessor"),
     ContainerChecker: Symbol("ContainerChecker"),
     ContainerGetter: Symbol("ContainerGetter"),
     Messenger: Symbol("Messenger"),

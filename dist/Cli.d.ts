@@ -1,11 +1,11 @@
 import { Logger } from "./utils/log/Logger";
-import { ContainerGetter } from "./manager/container_get/ContainerGetter";
 import { ContainerChecker } from "./manager/container_checker/ContainerChecker";
+import { ConfigurationProcessor } from "./manager/configuration_processor/ConfigurationProcessor";
 declare class Cli {
-    private containerGetter;
     private containerChecker;
+    private configurationProcessor;
     private logger;
-    constructor(containerGetter: ContainerGetter, containerChecker: ContainerChecker, logger: Logger);
+    constructor(containerChecker: ContainerChecker, configurationProcessor: ConfigurationProcessor, logger: Logger);
     start(): Promise<boolean>;
 }
 export { Cli };

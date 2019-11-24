@@ -27,14 +27,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const yargs_1 = __importDefault(require("yargs"));
 const inversify_1 = require("inversify");
 const types_1 = __importDefault(require("./di/types"));
-const ContainerGetter_1 = require("./manager/container_get/ContainerGetter");
 const ContainerChecker_1 = require("./manager/container_checker/ContainerChecker");
 const ConsoleMessageConfig_1 = require("./model/message_config/impl/ConsoleMessageConfig");
 const SlackMessageConfig_1 = require("./model/message_config/impl/SlackMessageConfig");
+const ConfigurationProcessor_1 = require("./manager/configuration_processor/ConfigurationProcessor");
+const Configuration_1 = require("./model/configuration/Configuration");
 let Cli = class Cli {
-    constructor(containerGetter, containerChecker, logger) {
-        this.containerGetter = containerGetter;
+    constructor(containerChecker, configurationProcessor, logger) {
         this.containerChecker = containerChecker;
+        this.configurationProcessor = configurationProcessor;
         this.logger = logger;
     }
     start() {
@@ -42,15 +43,17 @@ let Cli = class Cli {
             const argv = yargs_1.default
                 .help("h")
                 .alias("h", "help")
-                .group("image", "Main:")
+                .group("image", "Images:")
                 .alias("i", "image")
                 .describe("image", "Docker image to check. Could be defined more times.")
                 .array("image")
-                .demandOption("image", "At least one image is required")
+                .string("image")
+                .describe("images-def", "JSON file with image definition in format [{image: string, alias: string}, ...]")
+                .string("images-def")
                 .group(["console-enabled", "console-force"], "Console output:")
                 .describe("console-enabled", "Whether program should output to console")
                 .describe("console-force", "Whether program should output even if containers are up")
-                .group(["slack-enabled", "slack-webhook", "slack-force"], "Slack notify:")
+                .group(["slack-enabled", "slack-webhook", "slack-force"], "Slack notification:")
                 .describe("slack-enabled", "Whether program should send output to Slack")
                 .describe("slack-webhook", "If slack output is enabled, define the Slack webhook URL")
                 .implies("slack-enabled", "slack-webhook")
@@ -62,11 +65,8 @@ let Cli = class Cli {
             })
                 .argv;
             // console.log(JSON.stringify(argv));
-            const images = argv.image;
-            const containers = [];
-            for (const image of images) {
-                containers.push(yield this.containerGetter.getContainer(image));
-            }
+            const configuration = new Configuration_1.Configuration(argv.image, argv.imagesDef);
+            const containers = yield this.configurationProcessor.processConfig(configuration);
             const messageConfigs = [];
             if (argv.consoleEnabled !== undefined && argv.consoleEnabled) {
                 messageConfigs.push(new ConsoleMessageConfig_1.ConsoleMessageConfig(argv.consoleForce !== undefined && argv.consoleForce));
@@ -82,11 +82,11 @@ let Cli = class Cli {
 };
 Cli = __decorate([
     inversify_1.injectable(),
-    __param(0, inversify_1.inject(types_1.default.ContainerGetter)),
-    __param(1, inversify_1.inject(types_1.default.ContainerChecker)),
+    __param(0, inversify_1.inject(types_1.default.ContainerChecker)),
+    __param(1, inversify_1.inject(types_1.default.ConfigurationProcessor)),
     __param(2, inversify_1.inject(types_1.default.Logger)),
-    __metadata("design:paramtypes", [ContainerGetter_1.ContainerGetter,
-        ContainerChecker_1.ContainerChecker, Object])
+    __metadata("design:paramtypes", [ContainerChecker_1.ContainerChecker,
+        ConfigurationProcessor_1.ConfigurationProcessor, Object])
 ], Cli);
 exports.Cli = Cli;
 //# sourceMappingURL=Cli.js.map

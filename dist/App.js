@@ -27,22 +27,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const inversify_1 = require("inversify");
 const types_1 = __importDefault(require("./di/types"));
 const ContainerChecker_1 = require("./manager/container_checker/ContainerChecker");
-const ContainerGetter_1 = require("./manager/container_get/ContainerGetter");
 const LoggerMessageConfig_1 = require("./model/message_config/impl/LoggerMessageConfig");
+const ConfigurationProcessor_1 = require("./manager/configuration_processor/ConfigurationProcessor");
 let App = class App {
-    constructor(containerGetter, containerChecker, containerIdProvider, inspectProvider, logger) {
-        this.containerGetter = containerGetter;
+    constructor(containerChecker, containerIdProvider, inspectProvider, configurationProcessor, logger) {
         this.containerChecker = containerChecker;
         this.containerIdProvider = containerIdProvider;
         this.inspectProvider = inspectProvider;
+        this.configurationProcessor = configurationProcessor;
         this.logger = logger;
     }
-    start(images) {
+    start(configuration) {
         return __awaiter(this, void 0, void 0, function* () {
-            const containers = [];
-            for (const image of images) {
-                containers.push(yield this.containerGetter.getContainer(image));
-            }
+            const containers = yield this.configurationProcessor.processConfig(configuration);
             const messageConfigs = [new LoggerMessageConfig_1.LoggerMessageConfig(true)];
             this.containerChecker.checkContainers(containers, messageConfigs);
             //const containerId = await this.containerIdProvider.getContainerIdByImage("test:latest");
@@ -54,13 +51,12 @@ let App = class App {
 };
 App = __decorate([
     inversify_1.injectable(),
-    __param(0, inversify_1.inject(types_1.default.ContainerGetter)),
-    __param(1, inversify_1.inject(types_1.default.ContainerChecker)),
-    __param(2, inversify_1.inject(types_1.default.ContainerIdProvider)),
-    __param(3, inversify_1.inject(types_1.default.InspectProvider)),
+    __param(0, inversify_1.inject(types_1.default.ContainerChecker)),
+    __param(1, inversify_1.inject(types_1.default.ContainerIdProvider)),
+    __param(2, inversify_1.inject(types_1.default.InspectProvider)),
+    __param(3, inversify_1.inject(types_1.default.ConfigurationProcessor)),
     __param(4, inversify_1.inject(types_1.default.Logger)),
-    __metadata("design:paramtypes", [ContainerGetter_1.ContainerGetter,
-        ContainerChecker_1.ContainerChecker, Object, Object, Object])
+    __metadata("design:paramtypes", [ContainerChecker_1.ContainerChecker, Object, Object, ConfigurationProcessor_1.ConfigurationProcessor, Object])
 ], App);
 exports.App = App;
 //# sourceMappingURL=App.js.map

@@ -29,6 +29,7 @@ const types_1 = __importDefault(require("../../di/types"));
 const Container_1 = require("../../model/container/Container");
 const TimeUtils_1 = require("../../utils/TimeUtils");
 const ContainerState_1 = require("../../model/container_state/ContainerState");
+const ContainerRequest_1 = require("../../model/configuration/ContainerRequest");
 let ContainerGetter = class ContainerGetter {
     constructor(containerIdProvider, inspectProvider, logger) {
         this.containerIdProvider = containerIdProvider;
@@ -54,23 +55,24 @@ let ContainerGetter = class ContainerGetter {
             return ContainerState_1.ContainerState.RUNNING_UNKNOWN;
         }
     }
-    getContainerFromInspect(inspect) {
+    getContainerFromInspect(inspect, image, alias) {
         const parsedInspect = JSON.parse(inspect);
         const parsedContainer = parsedInspect[0];
         const id = parsedContainer.Id.substr(12);
-        const image = parsedContainer.Config.Image;
         const health = this.getHealth(parsedContainer);
         const startedAt = TimeUtils_1.TimeUtils.moment(parsedContainer.State.StartedAt);
-        const container = new Container_1.Container(id, image, health, startedAt);
+        const container = new Container_1.Container(id, image, alias, health, startedAt);
         return container;
     }
-    getContainer(image) {
+    getContainer(container) {
         return __awaiter(this, void 0, void 0, function* () {
+            const image = container instanceof ContainerRequest_1.ContainerRequest ? container.image : container;
+            const alias = container instanceof ContainerRequest_1.ContainerRequest ? container.alias : container;
             const containerId = yield this.containerIdProvider.getContainerIdByImage(image);
             if (containerId !== undefined) {
                 const inspectOutput = yield this.inspectProvider.getInspectForId(containerId);
                 if (inspectOutput !== undefined) {
-                    return this.getContainerFromInspect(inspectOutput);
+                    return this.getContainerFromInspect(inspectOutput, image, alias);
                 }
                 else {
                     this.logger.warn(`Cannot inspect container from image ${image}.`);
@@ -79,7 +81,7 @@ let ContainerGetter = class ContainerGetter {
             else {
                 this.logger.warn(`Container for image ${image} not found.`);
             }
-            return new Container_1.Container("n/a", image, ContainerState_1.ContainerState.DOWN, undefined);
+            return new Container_1.Container("n/a", image, alias, ContainerState_1.ContainerState.DOWN, undefined);
         });
     }
 };

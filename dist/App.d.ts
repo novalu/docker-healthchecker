@@ -1,15 +1,16 @@
 import { Logger } from "./utils/log/Logger";
 import { ContainerChecker } from "./manager/container_checker/ContainerChecker";
-import { ContainerGetter } from "./manager/container_get/ContainerGetter";
 import { ContainerIdProvider } from "./provider/container_id/ContainerIdProvider";
 import { InspectProvider } from "./provider/inspect/InspectProvider";
+import { Configuration } from "./model/configuration/Configuration";
+import { ConfigurationProcessor } from "./manager/configuration_processor/ConfigurationProcessor";
 declare class App {
-    private containerGetter;
     private containerChecker;
     private containerIdProvider;
     private inspectProvider;
+    private configurationProcessor;
     private logger;
-    constructor(containerGetter: ContainerGetter, containerChecker: ContainerChecker, containerIdProvider: ContainerIdProvider, inspectProvider: InspectProvider, logger: Logger);
-    start(images: string[]): Promise<boolean>;
+    constructor(containerChecker: ContainerChecker, containerIdProvider: ContainerIdProvider, inspectProvider: InspectProvider, configurationProcessor: ConfigurationProcessor, logger: Logger);
+    start(configuration: Configuration): Promise<boolean>;
 }
 export { App };
