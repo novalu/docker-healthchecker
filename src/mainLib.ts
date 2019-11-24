@@ -12,6 +12,7 @@ import { Container } from "./model/container/Container";
 import {ConsoleLogger} from "./utils/log/impl/ConsoleLogger";
 import { ContainerState} from "./model/container_state/ContainerState";
 import {Configuration} from "./model/configuration/Configuration";
+import { ContainerRequest } from "./model/configuration/ContainerRequest";
 
 const containersHealth = async function containersHealth(configuration: Configuration): Promise<Container[]> {
     container.bind<Logger>(TYPES.Logger).to(ConsoleLogger);
@@ -20,4 +21,4 @@ const containersHealth = async function containersHealth(configuration: Configur
     return await lib.get(configuration);
 }
 
-export { containersHealth, Container, ContainerState, Configuration }
+export { containersHealth, Container, ContainerState, Configuration, ContainerRequest }
