@@ -20,7 +20,7 @@ class SlackMessenger implements Messenger {
         const fields = [];
         fields.push({
             title: "Image",
-            value: container.image,
+            value: container.alias,
             short: true
         });
         fields.push({

@@ -11,12 +11,13 @@ import { Lib } from "./Lib";
 import { Container } from "./model/container/Container";
 import {ConsoleLogger} from "./utils/log/impl/ConsoleLogger";
 import { ContainerState} from "./model/container_state/ContainerState";
+import {Configuration} from "./model/configuration/Configuration";
 
-const containersHealth = async function containersHealth(...images: string[]): Promise<Container[]> {
+const containersHealth = async function containersHealth(configuration: Configuration): Promise<Container[]> {
     container.bind<Logger>(TYPES.Logger).to(ConsoleLogger);
 
     const lib = container.get<Lib>(TYPES.Lib);
-    return await lib.get(...images);
+    return await lib.get(configuration);
 }
 
-export { containersHealth, Container, ContainerState }
+export { containersHealth, Container, ContainerState, Configuration }

@@ -7,19 +7,23 @@ import { App } from "./App";
 import {Logger} from "./utils/log/Logger";
 import {SignaleLogger} from "./utils/log/impl/SignaleLogger";
 import {NoOpLogger} from "./utils/log/impl/NoOpLogger";
+import {Configuration} from "./model/configuration/Configuration";
 
-async function startApp(images: string[]): Promise<App> {
+async function startApp(configuration: Configuration): Promise<App> {
     container.bind<Logger>(TYPES.Logger).to(SignaleLogger);
 
     const app = container.get<App>(TYPES.App);
-    const started = await app.start(images);
+    const started = await app.start(configuration);
     return started ? app : undefined;
 }
 
 (async () => {
     let app;
     try {
-        app = await startApp([ "test:latest", "test:platest" ]);
+        const configuration = new Configuration(
+          ["test"], "images-def-example.json"
+        );
+        app = await startApp(configuration);
     } catch (err) {
         const msg = "Cannot start application";
         if (app) {

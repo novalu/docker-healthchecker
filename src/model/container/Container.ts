@@ -5,6 +5,7 @@ class Container {
     constructor(
         public id: string,
         public image: string,
+        public alias: string,
         public state: ContainerState,
         public startedAt: moment.Moment
     ) {}

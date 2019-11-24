@@ -9,21 +9,19 @@ import container from "./di/container";
 import {NoOpLogger} from "./utils/log/impl/NoOpLogger";
 import {SignaleLogger} from "./utils/log/impl/SignaleLogger";
 import { Container } from "./model/container/Container";
+import {Configuration} from "./model/configuration/Configuration";
+import {ConfigurationProcessor} from "./manager/configuration_processor/ConfigurationProcessor";
 
 @injectable()
 class Lib {
 
     constructor(
-        @inject(TYPES.ContainerGetter) private containerGetter: ContainerGetter,
+        @inject(TYPES.ConfigurationProcessor) private configurationProcessor: ConfigurationProcessor,
         @inject(TYPES.Logger) private logger: Logger
     ) {}
 
-    public async get(...images: string[]): Promise<Container[]> {
-        const containers = [];
-        for (const image of images) {
-            const container = await this.containerGetter.getContainer(image);
-            containers.push(container);
-        }
+    public async get(configuration: Configuration): Promise<Container[]> {
+        const containers = await this.configurationProcessor.processConfig(configuration);
         return containers;
     }
 
