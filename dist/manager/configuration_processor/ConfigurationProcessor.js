@@ -38,7 +38,6 @@ const fs = __importStar(require("fs-extra"));
 const ContainerRequest_1 = require("../../model/configuration/ContainerRequest");
 const validator_1 = __importDefault(require("validator"));
 const joi_1 = __importDefault(require("@hapi/joi"));
-const path_1 = __importDefault(require("path"));
 let ConfigurationProcessor = class ConfigurationProcessor {
     constructor(containerGetter, logger) {
         this.containerGetter = containerGetter;
@@ -55,11 +54,11 @@ let ConfigurationProcessor = class ConfigurationProcessor {
         return __awaiter(this, void 0, void 0, function* () {
             const images = [];
             console.log(process.cwd());
-            const exists = yield fs.pathExists(path_1.default.join(process.cwd(), imagesFile));
+            const exists = yield fs.pathExists(imagesFile);
             if (exists) {
                 const stat = yield fs.stat(imagesFile);
                 if (stat.isFile()) {
-                    const contents = (yield fs.readFile(path_1.default.join(process.cwd(), imagesFile))).toString();
+                    const contents = (yield fs.readFile(imagesFile)).toString();
                     const isJson = validator_1.default.isJSON(contents);
                     if (isJson) {
                         const imagesDef = JSON.parse(contents);
@@ -93,6 +92,7 @@ let ConfigurationProcessor = class ConfigurationProcessor {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
             const containers = [];
+            console.log(configuration.images);
             const imagesResult = joi_1.default.array().items(joi_1.default.string()).validate(configuration.images);
             if (imagesResult.error) {
                 throw new Error("Provided images are not valid");
