@@ -4,19 +4,14 @@ import { Logger } from "../utils/log/Logger";
 import { SignaleLogger } from "../utils/log/impl/SignaleLogger";
 import { App } from "../App";
 import {InspectProvider} from "../provider/inspect/InspectProvider";
-import {FakeInspectProvider} from "../provider/inspect/FakeInspectProvider";
 import {ContainerIdProvider} from "../provider/container_id/ContainerIdProvider";
-import {FakeContainerIdProvider} from "../provider/container_id/FakeContainerIdProvider";
-import {Messenger} from "../manager/messenger/Messenger";
-import {LoggerMessenger} from "../manager/messenger/impl/LoggerMessenger";
-import {ContainerChecker} from "../manager/container_checker/ContainerChecker";
-import {ContainerGetter} from "../manager/container_get/ContainerGetter";
-import {EmptyInspectProvider} from "../provider/inspect/EmptyInspectProvider";
-import {DockerContainerIdProvider} from "../provider/container_id/DockerContainerIdProvider";
-import {DockerInspectProvider} from "../provider/inspect/DockerInspectProvider";
 import {Cli} from "../Cli";
 import { Lib } from "../Lib";
-import {ConfigurationProcessor} from "../manager/configuration_processor/ConfigurationProcessor";
+import { DockerContainerIdProvider } from "../provider/container_id/impl/DockerContainerIdProvider";
+import { DockerInspectProvider } from "../provider/inspect/impl/DockerInspectProvider";
+import { ContainersProcessor } from "../manager/containers_processor/ContainersProcessor";
+import { ContainerStateMonitor } from "../manager/container_state_monitor/ContainerStateMonitor";
+import { ContainerFinder } from "../manager/container_finder/ContainerFinder";
 
 const container = new Container();
 
@@ -43,16 +38,16 @@ container
     .inSingletonScope();
 
 container
-    .bind<ConfigurationProcessor>(TYPES.ConfigurationProcessor)
-    .to(ConfigurationProcessor)
+    .bind<ContainersProcessor>(TYPES.ContainersProcessor)
+    .to(ContainersProcessor)
     .inSingletonScope();
 container
-    .bind<ContainerChecker>(TYPES.ContainerChecker)
-    .to(ContainerChecker)
+    .bind<ContainerStateMonitor>(TYPES.ContainerStateMonitor)
+    .to(ContainerStateMonitor)
     .inSingletonScope();
 container
-    .bind<ContainerGetter>(TYPES.ContainerGetter)
-    .to(ContainerGetter)
+    .bind<ContainerFinder>(TYPES.ContainerFinder)
+    .to(ContainerFinder)
     .inSingletonScope();
 
 export default container;

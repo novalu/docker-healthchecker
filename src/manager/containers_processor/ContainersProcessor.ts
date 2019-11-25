@@ -1,20 +1,20 @@
 import {inject, injectable} from "inversify";
 import {Container} from "../../model/container/Container";
-import {ContainerGetter} from "../container_get/ContainerGetter";
 import TYPES from "../../di/types";
 import * as fs from "fs-extra";
 import validator from "validator";
 import Joi from "@hapi/joi";
 import {Logger} from "../../utils/log/Logger";
 import path from "path";
-import { ContainerRequest } from "../../model/configuration/ContainerRequest";
-import { Configuration } from "../../model/configuration/Configuration";
+import { ContainerFinder } from "../container_finder/ContainerFinder";
+import { ContainerRequest } from "./configuration/ContainerRequest";
+import { Configuration } from "./configuration/Configuration";
 
 @injectable()
-class ConfigurationProcessor {
+class ContainersProcessor {
 
     constructor(
-        @inject(TYPES.ContainerGetter) private containerGetter: ContainerGetter,
+        @inject(TYPES.ContainerFinder) private containerFinder: ContainerFinder,
         @inject(TYPES.Logger) private logger: Logger
     ) {}
 
@@ -59,23 +59,22 @@ class ConfigurationProcessor {
         }
     }
 
-    public async processConfig(configuration: Configuration): Promise<Container[]> {
+    public async process(configuration: Configuration): Promise<Container[]> {
         const containers = [];
-        console.log(configuration.images);
         const imagesResult = Joi.array().items(Joi.string()).validate(configuration.images);
         if (imagesResult.error) {
             throw new Error("Provided images are not valid");
         }
         const images = [...(configuration.images ?? [])];
-        if (configuration.imagesFile) {
-            images.push(...(await this.processImagesFile(configuration.imagesFile)));
+        if (configuration.imagesDef) {
+            images.push(...(await this.processImagesFile(configuration.imagesDef)));
         }
         for (const image of images) {
-            containers.push(await this.containerGetter.getContainer(image));
+            containers.push(await this.containerFinder.findContainer(image));
         }
         return containers;
     }
 
 }
 
-export { ConfigurationProcessor }
+export { ContainersProcessor }

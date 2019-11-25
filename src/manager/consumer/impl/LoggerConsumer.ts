@@ -1,15 +1,15 @@
-import {Messenger} from "../Messenger";
+import {Consumer} from "../Consumer";
 import {inject, injectable} from "inversify";
 import TYPES from "../../../di/types";
 import {Logger} from "../../../utils/log/Logger";
 import chalk = require("chalk");
-import { MessageConfig } from "../../../model/message_config/MessageConfig";
 import { Container } from "../../../model/container/Container";
-import { LoggerMessageConfig } from "../../../model/message_config/impl/LoggerMessageConfig";
 import { ContainerState } from "../../../model/container_state/ContainerState";
+import { ConsumerConfig } from "../consumer_config/ConsumerConfig";
+import { LoggerConsumerConfig } from "../consumer_config/impl/LoggerConsumerConfig";
 
 @injectable()
-class LoggerMessenger implements Messenger {
+class LoggerConsumer implements Consumer {
 
     constructor(
         @inject(TYPES.Logger) private logger: Logger
@@ -39,15 +39,15 @@ class LoggerMessenger implements Messenger {
         return line.join("\n");
     };
 
-    sendMessage(containers: Container[], messageConfig: MessageConfig) {
-        if (!(messageConfig instanceof LoggerMessageConfig)) {
+    consume(containers: Container[], consumerConfig: ConsumerConfig) {
+        if (!(consumerConfig instanceof LoggerConsumerConfig)) {
             throw new Error("Message config is not Slack message config");
         }
-        const loggerMessageConfig = messageConfig as LoggerMessageConfig;
+        const loggerConfig = consumerConfig as LoggerConsumerConfig;
         const textSummary = this.getTextSummary(containers);
         this.logger.info(textSummary);
     }
 
 }
 
-export { LoggerMessenger }
+export { LoggerConsumer }

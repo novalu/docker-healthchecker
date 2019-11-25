@@ -1,8 +1,8 @@
-import {InspectProvider} from "./InspectProvider";
 import execSh = require("exec-sh");
 import {inject, injectable} from "inversify";
-import {Logger} from "../../utils/log/Logger";
-import TYPES from "../../di/types";
+import { InspectProvider } from "../InspectProvider";
+import TYPES from "../../../di/types";
+import { Logger } from "../../../utils/log/Logger";
 
 @injectable()
 class DockerInspectProvider implements InspectProvider {

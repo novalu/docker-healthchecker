@@ -6,10 +6,10 @@ import {Logger} from "../../utils/log/Logger";
 import { Container } from "../../model/container/Container";
 import {TimeUtils} from "../../utils/TimeUtils";
 import { ContainerState } from "../../model/container_state/ContainerState";
-import {ContainerRequest} from "../../model/configuration/ContainerRequest";
+import { ContainerRequest } from "../containers_processor/configuration/ContainerRequest";
 
 @injectable()
-class ContainerGetter {
+class ContainerFinder {
 
     constructor(
         @inject(TYPES.ContainerIdProvider) private containerIdProvider: ContainerIdProvider,
@@ -46,7 +46,7 @@ class ContainerGetter {
         return container;
     }
 
-    public async getContainer(container: ContainerRequest | string): Promise<Container> {
+    public async findContainer(container: ContainerRequest | string): Promise<Container> {
         const image = container instanceof ContainerRequest ? container.image : container;
         const alias = container instanceof ContainerRequest ? container.alias : container;
         const containerId = await this.containerIdProvider.getContainerIdByImage(image);
@@ -65,4 +65,4 @@ class ContainerGetter {
 
 }
 
-export { ContainerGetter }
+export { ContainerFinder }

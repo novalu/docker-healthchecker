@@ -1,7 +1,7 @@
-class MessageConfig {
+class ConsumerConfig {
     constructor(
         public forceSend: boolean
     ) {}
 }
 
-export { MessageConfig }
+export { ConsumerConfig }

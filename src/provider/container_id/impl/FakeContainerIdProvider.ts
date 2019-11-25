@@ -1,5 +1,5 @@
-import {ContainerIdProvider} from "./ContainerIdProvider";
 import {injectable} from "inversify";
+import { ContainerIdProvider } from "../ContainerIdProvider";
 
 @injectable()
 class FakeContainerIdProvider implements ContainerIdProvider {

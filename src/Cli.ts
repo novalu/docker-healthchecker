@@ -4,21 +4,17 @@ import container from "./di/container";
 import { inject, injectable } from "inversify";
 import TYPES from "./di/types";
 import { Logger } from "./utils/log/Logger";
-import { Messenger } from "./manager/messenger/Messenger";
-import {LoggerMessenger} from "./manager/messenger/impl/LoggerMessenger";
-import { SlackMessenger } from "./manager/messenger/impl/SlackMessenger";
-import {ContainerGetter} from "./manager/container_get/ContainerGetter";
-import {ContainerChecker} from "./manager/container_checker/ContainerChecker";
-import { ConsoleMessageConfig } from "./model/message_config/impl/ConsoleMessageConfig";
-import { SlackMessageConfig } from "./model/message_config/impl/SlackMessageConfig";
-import {ConfigurationProcessor} from "./manager/configuration_processor/ConfigurationProcessor";
-import {Configuration} from "./model/configuration/Configuration";
+import { ContainerStateMonitor } from "./manager/container_state_monitor/ContainerStateMonitor";
+import { ContainersProcessor } from "./manager/containers_processor/ContainersProcessor";
+import { Configuration } from "./manager/containers_processor/configuration/Configuration";
+import { ConsoleConsumerConfig } from "./manager/consumer/consumer_config/impl/ConsoleConsumerConfig";
+import { SlackConsumerConfig } from "./manager/consumer/consumer_config/impl/SlackConsumerConfig";
 
 @injectable()
 class Cli {
     constructor(
-        @inject(TYPES.ContainerChecker) private containerChecker: ContainerChecker,
-        @inject(TYPES.ConfigurationProcessor) private configurationProcessor: ConfigurationProcessor,
+        @inject(TYPES.ContainerStateMonitor) private containerStateMonitor: ContainerStateMonitor,
+        @inject(TYPES.ContainersProcessor) private containersProcessor: ContainersProcessor,
         @inject(TYPES.Logger) private logger: Logger
     ) {}
 
@@ -59,17 +55,17 @@ class Cli {
             argv.image as string[],
             argv.imagesDef as string
         );
-        const containers = await this.configurationProcessor.processConfig(configuration);
+        const containers = await this.containersProcessor.process(configuration);
 
         const messageConfigs = [];
         if (argv.consoleEnabled !== undefined && argv.consoleEnabled as boolean) {
-            messageConfigs.push(new ConsoleMessageConfig(argv.consoleForce !== undefined && argv.consoleForce as boolean))
+            messageConfigs.push(new ConsoleConsumerConfig(argv.consoleForce !== undefined && argv.consoleForce as boolean))
         }
         if (argv.slackEnabled !== undefined && argv.slackEnabled as boolean) {
-            const slackConfig = new SlackMessageConfig(argv.slackWebhook as string, argv.slackForce !== undefined && argv.slackForce as boolean);
+            const slackConfig = new SlackConsumerConfig(argv.slackWebhook as string, argv.slackForce !== undefined && argv.slackForce as boolean);
             messageConfigs.push(slackConfig);
         }
-        await this.containerChecker.checkContainers(containers, messageConfigs);
+        await this.containerStateMonitor.processState(containers, messageConfigs);
 
         return true;
     }

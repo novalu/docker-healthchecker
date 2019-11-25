@@ -1,33 +1,32 @@
 import { inject, injectable } from "inversify";
 import TYPES from "./di/types";
 import {Logger} from "./utils/log/Logger";
-import {ContainerChecker} from "./manager/container_checker/ContainerChecker";
-import {ContainerGetter} from "./manager/container_get/ContainerGetter";
 import {ContainerIdProvider} from "./provider/container_id/ContainerIdProvider";
 import {InspectProvider} from "./provider/inspect/InspectProvider";
 import container from "./di/container";
 import {NoOpLogger} from "./utils/log/impl/NoOpLogger";
 import {SignaleLogger} from "./utils/log/impl/SignaleLogger";
-import { LoggerMessageConfig } from "./model/message_config/impl/LoggerMessageConfig";
-import {Configuration} from "./model/configuration/Configuration";
-import {ConfigurationProcessor} from "./manager/configuration_processor/ConfigurationProcessor";
+import { ContainerStateMonitor } from "./manager/container_state_monitor/ContainerStateMonitor";
+import { ContainersProcessor } from "./manager/containers_processor/ContainersProcessor";
+import { Configuration } from "./manager/containers_processor/configuration/Configuration";
+import { LoggerConsumerConfig } from "./manager/consumer/consumer_config/impl/LoggerConsumerConfig";
 
 @injectable()
 class App {
 
     constructor(
-        @inject(TYPES.ContainerChecker) private containerChecker: ContainerChecker,
+        @inject(TYPES.ContainerStateMonitor) private containerStateMonitor: ContainerStateMonitor,
         @inject(TYPES.ContainerIdProvider) private containerIdProvider: ContainerIdProvider,
         @inject(TYPES.InspectProvider) private inspectProvider: InspectProvider,
-        @inject(TYPES.ConfigurationProcessor) private configurationProcessor: ConfigurationProcessor,
+        @inject(TYPES.ContainersProcessor) private containersProcessor: ContainersProcessor,
         @inject(TYPES.Logger) private logger: Logger
     ) {}
 
     public async start(configuration: Configuration): Promise<boolean> {
-        const containers = await this.configurationProcessor.processConfig(configuration);
+        const containers = await this.containersProcessor.process(configuration);
 
-        const messageConfigs = [ new LoggerMessageConfig(true) ];
-        this.containerChecker.checkContainers(containers, messageConfigs);
+        const messageConfigs = [ new LoggerConsumerConfig(true) ];
+        this.containerStateMonitor.processState(containers, messageConfigs);
 
         //const containerId = await this.containerIdProvider.getContainerIdByImage("test:latest");
         //this.logger.info(containerId);

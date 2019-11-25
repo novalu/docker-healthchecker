@@ -1,5 +1,5 @@
-import {InspectProvider} from "./InspectProvider";
 import {injectable} from "inversify";
+import { InspectProvider } from "../InspectProvider";
 
 @injectable()
 class FakeInspectProvider implements InspectProvider {

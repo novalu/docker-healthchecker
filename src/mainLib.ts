@@ -11,14 +11,14 @@ import { Lib } from "./Lib";
 import { Container } from "./model/container/Container";
 import {ConsoleLogger} from "./utils/log/impl/ConsoleLogger";
 import { ContainerState} from "./model/container_state/ContainerState";
-import {Configuration} from "./model/configuration/Configuration";
-import { ContainerRequest } from "./model/configuration/ContainerRequest";
+import { Configuration } from "./manager/containers_processor/configuration/Configuration";
+import { ContainerRequest } from "./manager/containers_processor/configuration/ContainerRequest";
 
 const containersHealth = async function containersHealth(configuration: Configuration): Promise<Container[]> {
     container.bind<Logger>(TYPES.Logger).to(ConsoleLogger);
 
     const lib = container.get<Lib>(TYPES.Lib);
-    return await lib.get(configuration);
+    return await lib.check(configuration);
 }
 
 export { containersHealth, Container, ContainerState, Configuration, ContainerRequest }

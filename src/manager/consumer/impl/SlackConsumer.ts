@@ -1,15 +1,15 @@
-import {Messenger} from "../Messenger";
+import {Consumer} from "../Consumer";
 import {inject, injectable} from "inversify";
 import TYPES from "../../../di/types";
 import {Logger} from "../../../utils/log/Logger";
 import {IncomingWebhook} from "@slack/webhook";
-import { MessageConfig } from "../../../model/message_config/MessageConfig";
 import { Container } from "../../../model/container/Container";
-import { SlackMessageConfig } from "../../../model/message_config/impl/SlackMessageConfig";
 import * as lodash from "lodash";
+import { ConsumerConfig } from "../consumer_config/ConsumerConfig";
+import { SlackConsumerConfig } from "../consumer_config/impl/SlackConsumerConfig";
 
 @injectable()
-class SlackMessenger implements Messenger {
+class SlackConsumer implements Consumer {
 
     constructor(
         @inject(TYPES.Logger) private logger: Logger
@@ -42,12 +42,12 @@ class SlackMessenger implements Messenger {
         return attachments;
     }
 
-    public async sendMessage(containers: Container[], messageConfig: MessageConfig) {
-        if (!(messageConfig instanceof SlackMessageConfig)) {
+    public async consume(containers: Container[], consumerConfig: ConsumerConfig) {
+        if (!(consumerConfig instanceof SlackConsumerConfig)) {
             throw new Error("Message config is not Slack message config");
         }
-        const slackMessageConfig = messageConfig as SlackMessageConfig;
-        const webhook = new IncomingWebhook(slackMessageConfig.webhook);
+        const slackConfig = consumerConfig as SlackConsumerConfig;
+        const webhook = new IncomingWebhook(slackConfig.webhook);
         await webhook.send({
             text: "Container status",
             attachments: this.createAttachments(containers)
@@ -57,4 +57,4 @@ class SlackMessenger implements Messenger {
 
 }
 
-export { SlackMessenger }
+export { SlackConsumer }

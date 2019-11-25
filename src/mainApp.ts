@@ -7,7 +7,7 @@ import { App } from "./App";
 import {Logger} from "./utils/log/Logger";
 import {SignaleLogger} from "./utils/log/impl/SignaleLogger";
 import {NoOpLogger} from "./utils/log/impl/NoOpLogger";
-import {Configuration} from "./model/configuration/Configuration";
+import { Configuration } from "./manager/containers_processor/configuration/Configuration";
 
 async function startApp(configuration: Configuration): Promise<App> {
     container.bind<Logger>(TYPES.Logger).to(SignaleLogger);

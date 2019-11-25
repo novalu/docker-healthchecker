@@ -1,15 +1,15 @@
-import {Messenger} from "../Messenger";
+import {Consumer} from "../Consumer";
 import {inject, injectable} from "inversify";
 import TYPES from "../../../di/types";
 import {Logger} from "../../../utils/log/Logger";
 import chalk = require("chalk");
-import { MessageConfig } from "../../../model/message_config/MessageConfig";
 import { Container } from "../../../model/container/Container";
-import { ConsoleMessageConfig } from "../../../model/message_config/impl/ConsoleMessageConfig";
 import { ContainerState } from "../../../model/container_state/ContainerState";
+import { ConsumerConfig } from "../consumer_config/ConsumerConfig";
+import { ConsoleConsumerConfig } from "../consumer_config/impl/ConsoleConsumerConfig";
 
 @injectable()
-class ConsoleMessenger implements Messenger {
+class ConsoleConsumer implements Consumer {
 
     constructor(
     ) {}
@@ -38,15 +38,15 @@ class ConsoleMessenger implements Messenger {
         return line.join("\n");
     };
 
-    sendMessage(containers: Container[], messageConfig: MessageConfig) {
-        if (!(messageConfig instanceof ConsoleMessageConfig)) {
+    consume(containers: Container[], consumerConfig: ConsumerConfig) {
+        if (!(consumerConfig instanceof ConsoleConsumerConfig)) {
             throw new Error("Message config is not Console message config");
         }
-        const loggerMessageConfig = messageConfig as ConsoleMessageConfig;
+        const consoleConfig = consumerConfig as ConsoleConsumerConfig;
         const textSummary = this.getTextSummary(containers);
         console.log(textSummary);
     }
 
 }
 
-export { ConsoleMessenger }
+export { ConsoleConsumer }
