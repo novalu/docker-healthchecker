@@ -9,7 +9,6 @@ import {SignaleLogger} from "./utils/log/impl/SignaleLogger";
 import { ContainerStateMonitor } from "./manager/container_state_monitor/ContainerStateMonitor";
 import { ContainersProcessor } from "./manager/containers_processor/ContainersProcessor";
 import { Configuration } from "./manager/containers_processor/configuration/Configuration";
-import { LoggerConsumerConfig } from "./manager/consumer/consumer_config/impl/LoggerConsumerConfig";
 
 @injectable()
 class App {
@@ -25,8 +24,7 @@ class App {
     public async start(configuration: Configuration): Promise<boolean> {
         const containers = await this.containersProcessor.process(configuration);
 
-        const messageConfigs = [ new LoggerConsumerConfig(true) ];
-        this.containerStateMonitor.processState(containers, messageConfigs);
+        this.containerStateMonitor.processState(containers, configuration);
 
         //const containerId = await this.containerIdProvider.getContainerIdByImage("test:latest");
         //this.logger.info(containerId);

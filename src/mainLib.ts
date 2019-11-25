@@ -13,6 +13,9 @@ import {ConsoleLogger} from "./utils/log/impl/ConsoleLogger";
 import { ContainerState} from "./model/container_state/ContainerState";
 import { Configuration } from "./manager/containers_processor/configuration/Configuration";
 import { ContainerRequest } from "./manager/containers_processor/configuration/ContainerRequest";
+import { ConsumerConfig } from "./manager/containers_processor/configuration/consumer_config/ConsumerConfig";
+import { ConsoleConsumerConfig } from "./manager/containers_processor/configuration/consumer_config/impl/ConsoleConsumerConfig";
+import { SlackConsumerConfig } from "./manager/containers_processor/configuration/consumer_config/impl/SlackConsumerConfig";
 
 const containersHealth = async function containersHealth(configuration: Configuration): Promise<Container[]> {
     container.bind<Logger>(TYPES.Logger).to(ConsoleLogger);
@@ -21,4 +24,4 @@ const containersHealth = async function containersHealth(configuration: Configur
     return await lib.check(configuration);
 }
 
-export { containersHealth, Container, ContainerState, Configuration, ContainerRequest }
+export { containersHealth, Container, ContainerState, Configuration, ContainerRequest, ConsumerConfig, ConsoleConsumerConfig, SlackConsumerConfig }

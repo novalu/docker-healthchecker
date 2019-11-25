@@ -9,17 +9,22 @@ import {SignaleLogger} from "./utils/log/impl/SignaleLogger";
 import { Container } from "./model/container/Container";
 import { ContainersProcessor } from "./manager/containers_processor/ContainersProcessor";
 import { Configuration } from "./manager/containers_processor/configuration/Configuration";
+import {ContainerStateMonitor} from "./manager/container_state_monitor/ContainerStateMonitor";
 
 @injectable()
 class Lib {
 
     constructor(
-        @inject(TYPES.ContainersProcessor) private configurationProcessor: ContainersProcessor,
+        @inject(TYPES.ContainersProcessor) private containersProcessor: ContainersProcessor,
+        @inject(TYPES.ContainerStateMonitor) private containerStateMonitor: ContainerStateMonitor,
         @inject(TYPES.Logger) private logger: Logger
     ) {}
 
     public async check(configuration: Configuration): Promise<Container[]> {
-        const containers = await this.configurationProcessor.process(configuration);
+        const containers = await this.containersProcessor.process(configuration);
+
+        await this.containerStateMonitor.processState(containers, configuration);
+
         return containers;
     }
 

@@ -8,6 +8,7 @@ import {Logger} from "./utils/log/Logger";
 import {SignaleLogger} from "./utils/log/impl/SignaleLogger";
 import {NoOpLogger} from "./utils/log/impl/NoOpLogger";
 import { Configuration } from "./manager/containers_processor/configuration/Configuration";
+import { LoggerConsumerConfig } from "./manager/containers_processor/configuration/consumer_config/impl/LoggerConsumerConfig";
 
 async function startApp(configuration: Configuration): Promise<App> {
     container.bind<Logger>(TYPES.Logger).to(SignaleLogger);
@@ -20,8 +21,9 @@ async function startApp(configuration: Configuration): Promise<App> {
 (async () => {
     let app;
     try {
+        const consumerConfigs = [ new LoggerConsumerConfig(true) ];
         const configuration = new Configuration(
-          ["test"], "images-def-example.json"
+          ["test"], "images-def-example.json", consumerConfigs
         );
         app = await startApp(configuration);
     } catch (err) {

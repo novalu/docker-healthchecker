@@ -7,8 +7,8 @@ import { Logger } from "./utils/log/Logger";
 import { ContainerStateMonitor } from "./manager/container_state_monitor/ContainerStateMonitor";
 import { ContainersProcessor } from "./manager/containers_processor/ContainersProcessor";
 import { Configuration } from "./manager/containers_processor/configuration/Configuration";
-import { ConsoleConsumerConfig } from "./manager/consumer/consumer_config/impl/ConsoleConsumerConfig";
-import { SlackConsumerConfig } from "./manager/consumer/consumer_config/impl/SlackConsumerConfig";
+import { ConsoleConsumerConfig } from "./manager/containers_processor/configuration/consumer_config/impl/ConsoleConsumerConfig";
+import { SlackConsumerConfig } from "./manager/containers_processor/configuration/consumer_config/impl/SlackConsumerConfig";
 
 @injectable()
 class Cli {
@@ -51,21 +51,25 @@ class Cli {
 
         // console.log(JSON.stringify(argv));
 
+        const consumerConfigs = [];
+        if (argv.consoleEnabled !== undefined && argv.consoleEnabled as boolean) {
+            consumerConfigs.push(new ConsoleConsumerConfig(argv.consoleForce !== undefined && argv.consoleForce as boolean))
+        }
+
+        if (argv.slackEnabled !== undefined && argv.slackEnabled as boolean) {
+            consumerConfigs.push(new SlackConsumerConfig(argv.slackWebhook as string,
+                argv.slackForce !== undefined && argv.slackForce as boolean))
+        }
+
         const configuration = new Configuration(
             argv.image as string[],
-            argv.imagesDef as string
+            argv.imagesDef as string,
+            consumerConfigs
         );
+
         const containers = await this.containersProcessor.process(configuration);
 
-        const messageConfigs = [];
-        if (argv.consoleEnabled !== undefined && argv.consoleEnabled as boolean) {
-            messageConfigs.push(new ConsoleConsumerConfig(argv.consoleForce !== undefined && argv.consoleForce as boolean))
-        }
-        if (argv.slackEnabled !== undefined && argv.slackEnabled as boolean) {
-            const slackConfig = new SlackConsumerConfig(argv.slackWebhook as string, argv.slackForce !== undefined && argv.slackForce as boolean);
-            messageConfigs.push(slackConfig);
-        }
-        await this.containerStateMonitor.processState(containers, messageConfigs);
+        await this.containerStateMonitor.processState(containers, configuration);
 
         return true;
     }

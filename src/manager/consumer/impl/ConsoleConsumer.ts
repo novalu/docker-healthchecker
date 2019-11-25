@@ -5,8 +5,8 @@ import {Logger} from "../../../utils/log/Logger";
 import chalk = require("chalk");
 import { Container } from "../../../model/container/Container";
 import { ContainerState } from "../../../model/container_state/ContainerState";
-import { ConsumerConfig } from "../consumer_config/ConsumerConfig";
-import { ConsoleConsumerConfig } from "../consumer_config/impl/ConsoleConsumerConfig";
+import { ConsumerConfig } from "../../containers_processor/configuration/consumer_config/ConsumerConfig";
+import { ConsoleConsumerConfig } from "../../containers_processor/configuration/consumer_config/impl/ConsoleConsumerConfig";
 
 @injectable()
 class ConsoleConsumer implements Consumer {

@@ -4,9 +4,9 @@ class SlackConsumerConfig extends ConsumerConfig {
 
     constructor(
         public webhook: string,
-        forceSend: boolean
+        force: boolean
     ) {
-        super(forceSend);
+        super(force);
     }
 
 }

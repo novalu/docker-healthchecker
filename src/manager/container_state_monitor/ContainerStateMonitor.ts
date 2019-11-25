@@ -9,10 +9,11 @@ import { SlackConsumer } from "../consumer/impl/SlackConsumer";
 import { LoggerConsumer } from "../consumer/impl/LoggerConsumer";
 import { ConsoleConsumer } from "../consumer/impl/ConsoleConsumer";
 import { Consumer } from "../consumer/Consumer";
-import { ConsumerConfig } from "../consumer/consumer_config/ConsumerConfig";
-import { LoggerConsumerConfig } from "../consumer/consumer_config/impl/LoggerConsumerConfig";
-import { ConsoleConsumerConfig } from "../consumer/consumer_config/impl/ConsoleConsumerConfig";
-import { SlackConsumerConfig } from "../consumer/consumer_config/impl/SlackConsumerConfig";
+import {Configuration} from "../containers_processor/configuration/Configuration";
+import { ConsumerConfig } from "../containers_processor/configuration/consumer_config/ConsumerConfig";
+import { LoggerConsumerConfig } from "../containers_processor/configuration/consumer_config/impl/LoggerConsumerConfig";
+import { ConsoleConsumerConfig } from "../containers_processor/configuration/consumer_config/impl/ConsoleConsumerConfig";
+import { SlackConsumerConfig } from "../containers_processor/configuration/consumer_config/impl/SlackConsumerConfig";
 
 @injectable()
 class ContainerStateMonitor {
@@ -33,16 +34,16 @@ class ContainerStateMonitor {
         }
     }
 
-    public async processState(containers: Container[], messageConfigs: ConsumerConfig[]) {
+    public async processState(containers: Container[], configuration: Configuration) {
         const healthy = lodash.every(containers, (container: Container) => {
             return container.state.id === ContainerState.RUNNING_HEALTHY.id;
         });
-        for (const messageConfig of messageConfigs) {
+        for (const consumerConfig of configuration.consumerConfigs) {
             if (container.isBound(TYPES.Consumer)) container.unbind(TYPES.Consumer);
-            container.bind<Consumer>(TYPES.Consumer).to(this.getConsumer(messageConfig));
+            container.bind<Consumer>(TYPES.Consumer).to(this.getConsumer(consumerConfig));
             const messenger = container.get<Consumer>(TYPES.Consumer);
-            if (!healthy || messageConfig.forceSend) {
-                await messenger.consume(containers, messageConfig);
+            if (!healthy || consumerConfig.force) {
+                await messenger.consume(containers, consumerConfig);
             }
         }
     }

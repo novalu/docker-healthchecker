@@ -5,8 +5,8 @@ import {Logger} from "../../../utils/log/Logger";
 import {IncomingWebhook} from "@slack/webhook";
 import { Container } from "../../../model/container/Container";
 import * as lodash from "lodash";
-import { ConsumerConfig } from "../consumer_config/ConsumerConfig";
-import { SlackConsumerConfig } from "../consumer_config/impl/SlackConsumerConfig";
+import { ConsumerConfig } from "../../containers_processor/configuration/consumer_config/ConsumerConfig";
+import { SlackConsumerConfig } from "../../containers_processor/configuration/consumer_config/impl/SlackConsumerConfig";
 
 @injectable()
 class SlackConsumer implements Consumer {

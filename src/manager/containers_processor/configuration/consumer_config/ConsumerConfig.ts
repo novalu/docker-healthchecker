@@ -1,6 +1,6 @@
 class ConsumerConfig {
     constructor(
-        public forceSend: boolean
+        public force: boolean
     ) {}
 }
 
