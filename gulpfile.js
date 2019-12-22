@@ -1,12 +1,9 @@
-const gulp = require("gulp");
+const { series, parallel, watch } = require('gulp');
 const run = require("gulp-run-command").default;
 
-gulp.task("build", run("npm run build"));
+function build() { return run("npm run build")(); }
 
-gulp.task("watch", () => {
-  gulp.watch([
-    "src/**/*.ts",
-  ], ["build"]);
-});
+function startWatch() { watch(["src/**/*.ts"], build); }
 
-gulp.task("default", ["build", "watch"]);
+exports.watch = startWatch;
+exports.default = parallel(build, startWatch);

@@ -24,30 +24,30 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@hapi/joi": "^16.1.7",
+    "@hapi/joi": "^16.1.8",
     "@slack/client": "^5.0.2",
     "@types/fs-extra": "^8.0.1",
-    "@types/hapi__joi": "^16.0.3",
-    "@types/lodash": "^4.14.146",
-    "@types/node": "^10.17.5",
+    "@types/hapi__joi": "^16.0.4",
+    "@types/lodash": "^4.14.149",
+    "@types/node": "^10.17.11",
     "@types/yargs": "^13.0.3",
     "chalk": "^3.0.0",
     "exec-sh": "^0.3.4",
     "fs-extra": "^8.1.0",
-    "gulp-run-command": "^0.0.9",
+    "gulp-run-command": "0.0.10",
     "inversify": "^5.0.1",
     "lodash": "^4.17.15",
     "moment": "^2.24.0",
-    "npm": "^6.13.0",
+    "npm": "^6.13.4",
     "path": "^0.12.7",
     "pretty-error": "^2.1.1",
     "reflect-metadata": "^0.1.13",
     "signale": "^1.4.0",
-    "typescript": "^3.7.2",
+    "typescript": "^3.7.4",
     "validator": "^12.1.0",
-    "yargs": "^14.2.0"
+    "yargs": "^15.0.2"
   },
   "devDependencies": {
-    "gulp": "^3.9.1"
+    "gulp": "^4.0.2"
   }
 }
