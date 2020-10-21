@@ -4,10 +4,10 @@ declare const TYPES: {
     Lib: symbol;
     ContainerIdProvider: symbol;
     InspectProvider: symbol;
-    ConfigurationProcessor: symbol;
-    ContainerChecker: symbol;
-    ContainerGetter: symbol;
-    Messenger: symbol;
+    ContainersProcessor: symbol;
+    ContainerStateMonitor: symbol;
+    ContainerFinder: symbol;
+    Consumer: symbol;
     Logger: symbol;
 };
 export default TYPES;

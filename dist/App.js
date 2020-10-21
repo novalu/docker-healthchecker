@@ -26,22 +26,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const inversify_1 = require("inversify");
 const types_1 = __importDefault(require("./di/types"));
-const ContainerChecker_1 = require("./manager/container_checker/ContainerChecker");
-const LoggerMessageConfig_1 = require("./model/message_config/impl/LoggerMessageConfig");
-const ConfigurationProcessor_1 = require("./manager/configuration_processor/ConfigurationProcessor");
+const ContainerStateMonitor_1 = require("./manager/container_state_monitor/ContainerStateMonitor");
+const ContainersProcessor_1 = require("./manager/containers_processor/ContainersProcessor");
 let App = class App {
-    constructor(containerChecker, containerIdProvider, inspectProvider, configurationProcessor, logger) {
-        this.containerChecker = containerChecker;
+    constructor(containerStateMonitor, containerIdProvider, inspectProvider, containersProcessor, logger) {
+        this.containerStateMonitor = containerStateMonitor;
         this.containerIdProvider = containerIdProvider;
         this.inspectProvider = inspectProvider;
-        this.configurationProcessor = configurationProcessor;
+        this.containersProcessor = containersProcessor;
         this.logger = logger;
     }
     start(configuration) {
         return __awaiter(this, void 0, void 0, function* () {
-            const containers = yield this.configurationProcessor.processConfig(configuration);
-            const messageConfigs = [new LoggerMessageConfig_1.LoggerMessageConfig(true)];
-            this.containerChecker.checkContainers(containers, messageConfigs);
+            const containers = yield this.containersProcessor.process(configuration);
+            this.containerStateMonitor.processState(containers, configuration);
             //const containerId = await this.containerIdProvider.getContainerIdByImage("test:latest");
             //this.logger.info(containerId);
             //await this.inspectProvider.getInspectForId("17fba8182cbb");
@@ -51,12 +49,12 @@ let App = class App {
 };
 App = __decorate([
     inversify_1.injectable(),
-    __param(0, inversify_1.inject(types_1.default.ContainerChecker)),
+    __param(0, inversify_1.inject(types_1.default.ContainerStateMonitor)),
     __param(1, inversify_1.inject(types_1.default.ContainerIdProvider)),
     __param(2, inversify_1.inject(types_1.default.InspectProvider)),
-    __param(3, inversify_1.inject(types_1.default.ConfigurationProcessor)),
+    __param(3, inversify_1.inject(types_1.default.ContainersProcessor)),
     __param(4, inversify_1.inject(types_1.default.Logger)),
-    __metadata("design:paramtypes", [ContainerChecker_1.ContainerChecker, Object, Object, ConfigurationProcessor_1.ConfigurationProcessor, Object])
+    __metadata("design:paramtypes", [ContainerStateMonitor_1.ContainerStateMonitor, Object, Object, ContainersProcessor_1.ContainersProcessor, Object])
 ], App);
 exports.App = App;
 //# sourceMappingURL=App.js.map

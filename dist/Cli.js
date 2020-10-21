@@ -27,15 +27,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const yargs_1 = __importDefault(require("yargs"));
 const inversify_1 = require("inversify");
 const types_1 = __importDefault(require("./di/types"));
-const ContainerChecker_1 = require("./manager/container_checker/ContainerChecker");
-const ConsoleMessageConfig_1 = require("./model/message_config/impl/ConsoleMessageConfig");
-const SlackMessageConfig_1 = require("./model/message_config/impl/SlackMessageConfig");
-const ConfigurationProcessor_1 = require("./manager/configuration_processor/ConfigurationProcessor");
-const Configuration_1 = require("./model/configuration/Configuration");
+const ContainerStateMonitor_1 = require("./manager/container_state_monitor/ContainerStateMonitor");
+const ContainersProcessor_1 = require("./manager/containers_processor/ContainersProcessor");
+const Configuration_1 = require("./manager/containers_processor/configuration/Configuration");
+const ConsoleConsumerConfig_1 = require("./manager/containers_processor/configuration/consumer_config/impl/ConsoleConsumerConfig");
+const SlackConsumerConfig_1 = require("./manager/containers_processor/configuration/consumer_config/impl/SlackConsumerConfig");
 let Cli = class Cli {
-    constructor(containerChecker, configurationProcessor, logger) {
-        this.containerChecker = containerChecker;
-        this.configurationProcessor = configurationProcessor;
+    constructor(containerStateMonitor, containersProcessor, logger) {
+        this.containerStateMonitor = containerStateMonitor;
+        this.containersProcessor = containersProcessor;
         this.logger = logger;
     }
     start() {
@@ -65,28 +65,27 @@ let Cli = class Cli {
             })
                 .argv;
             // console.log(JSON.stringify(argv));
-            const configuration = new Configuration_1.Configuration(argv.image, argv.imagesDef);
-            const containers = yield this.configurationProcessor.processConfig(configuration);
-            const messageConfigs = [];
+            const consumerConfigs = [];
             if (argv.consoleEnabled !== undefined && argv.consoleEnabled) {
-                messageConfigs.push(new ConsoleMessageConfig_1.ConsoleMessageConfig(argv.consoleForce !== undefined && argv.consoleForce));
+                consumerConfigs.push(new ConsoleConsumerConfig_1.ConsoleConsumerConfig(argv.consoleForce !== undefined && argv.consoleForce));
             }
             if (argv.slackEnabled !== undefined && argv.slackEnabled) {
-                const slackConfig = new SlackMessageConfig_1.SlackMessageConfig(argv.slackWebhook, argv.slackForce !== undefined && argv.slackForce);
-                messageConfigs.push(slackConfig);
+                consumerConfigs.push(new SlackConsumerConfig_1.SlackConsumerConfig(argv.slackWebhook, argv.slackForce !== undefined && argv.slackForce));
             }
-            yield this.containerChecker.checkContainers(containers, messageConfigs);
+            const configuration = new Configuration_1.Configuration(argv.image, argv.imagesDef, consumerConfigs);
+            const containers = yield this.containersProcessor.process(configuration);
+            yield this.containerStateMonitor.processState(containers, configuration);
             return true;
         });
     }
 };
 Cli = __decorate([
     inversify_1.injectable(),
-    __param(0, inversify_1.inject(types_1.default.ContainerChecker)),
-    __param(1, inversify_1.inject(types_1.default.ConfigurationProcessor)),
+    __param(0, inversify_1.inject(types_1.default.ContainerStateMonitor)),
+    __param(1, inversify_1.inject(types_1.default.ContainersProcessor)),
     __param(2, inversify_1.inject(types_1.default.Logger)),
-    __metadata("design:paramtypes", [ContainerChecker_1.ContainerChecker,
-        ConfigurationProcessor_1.ConfigurationProcessor, Object])
+    __metadata("design:paramtypes", [ContainerStateMonitor_1.ContainerStateMonitor,
+        ContainersProcessor_1.ContainersProcessor, Object])
 ], Cli);
 exports.Cli = Cli;
 //# sourceMappingURL=Cli.js.map

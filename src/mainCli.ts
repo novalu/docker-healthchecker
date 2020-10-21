@@ -13,7 +13,7 @@ async function startCli(): Promise<Cli> {
 
     const cli = container.get<Cli>(TYPES.Cli);
     const started = await cli.start();
-    return started ? cli : undefined;
+    return started ? cli : undefined;
 }
 
 (async () => {

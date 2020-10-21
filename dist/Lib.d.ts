@@ -1,11 +1,13 @@
 import { Logger } from "./utils/log/Logger";
 import { Container } from "./model/container/Container";
-import { Configuration } from "./model/configuration/Configuration";
-import { ConfigurationProcessor } from "./manager/configuration_processor/ConfigurationProcessor";
+import { ContainersProcessor } from "./manager/containers_processor/ContainersProcessor";
+import { Configuration } from "./manager/containers_processor/configuration/Configuration";
+import { ContainerStateMonitor } from "./manager/container_state_monitor/ContainerStateMonitor";
 declare class Lib {
-    private configurationProcessor;
+    private containersProcessor;
+    private containerStateMonitor;
     private logger;
-    constructor(configurationProcessor: ConfigurationProcessor, logger: Logger);
-    get(configuration: Configuration): Promise<Container[]>;
+    constructor(containersProcessor: ContainersProcessor, containerStateMonitor: ContainerStateMonitor, logger: Logger);
+    check(configuration: Configuration): Promise<Container[]>;
 }
 export { Lib };

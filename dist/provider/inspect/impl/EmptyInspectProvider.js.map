@@ -1,0 +1,1 @@
+{"version":3,"file":"EmptyInspectProvider.js","sourceRoot":"","sources":["../../../../src/provider/inspect/impl/EmptyInspectProvider.ts"],"names":[],"mappings":";;;;;;;;;;;;;;;;;AAAA,yCAAqC;AAIrC,IAAM,oBAAoB,GAA1B,MAAM,oBAAoB;IAEhB,eAAe,CAAC,EAAU;;YAC5B,OAAO,EAAE,CAAC;QACd,CAAC;KAAA;CAEJ,CAAA;AANK,oBAAoB;IADzB,sBAAU,EAAE;GACP,oBAAoB,CAMzB;AAEQ,oDAAoB"}

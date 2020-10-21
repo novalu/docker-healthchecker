@@ -1,8 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class Container {
-    constructor(id, image, alias, state, startedAt) {
+    constructor(id, name, image, alias, state, startedAt) {
         this.id = id;
+        this.name = name;
         this.image = image;
         this.alias = alias;
         this.state = state;

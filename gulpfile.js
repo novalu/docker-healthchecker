@@ -6,4 +6,4 @@ function build() { return run("npm run build")(); }
 function startWatch() { watch(["src/**/*.ts"], build); }
 
 exports.watch = startWatch;
-exports.default = parallel(build, startWatch);
+exports.default = series(build, startWatch);

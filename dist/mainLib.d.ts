@@ -1,7 +1,10 @@
 import "reflect-metadata";
 import { Container } from "./model/container/Container";
 import { ContainerState } from "./model/container_state/ContainerState";
-import { Configuration } from "./model/configuration/Configuration";
-import { ContainerRequest } from "./model/configuration/ContainerRequest";
+import { Configuration } from "./manager/containers_processor/configuration/Configuration";
+import { ContainerRequest } from "./manager/containers_processor/configuration/ContainerRequest";
+import { ConsumerConfig } from "./manager/containers_processor/configuration/consumer_config/ConsumerConfig";
+import { ConsoleConsumerConfig } from "./manager/containers_processor/configuration/consumer_config/impl/ConsoleConsumerConfig";
+import { SlackConsumerConfig } from "./manager/containers_processor/configuration/consumer_config/impl/SlackConsumerConfig";
 declare const containersHealth: (configuration: Configuration) => Promise<Container[]>;
-export { containersHealth, Container, ContainerState, Configuration, ContainerRequest };
+export { containersHealth, Container, ContainerState, Configuration, ContainerRequest, ConsumerConfig, ConsoleConsumerConfig, SlackConsumerConfig };

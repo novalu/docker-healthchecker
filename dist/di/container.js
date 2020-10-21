@@ -6,13 +6,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const inversify_1 = require("inversify");
 const types_1 = __importDefault(require("./types"));
 const App_1 = require("../App");
-const ContainerChecker_1 = require("../manager/container_checker/ContainerChecker");
-const ContainerGetter_1 = require("../manager/container_get/ContainerGetter");
-const DockerContainerIdProvider_1 = require("../provider/container_id/DockerContainerIdProvider");
-const DockerInspectProvider_1 = require("../provider/inspect/DockerInspectProvider");
 const Cli_1 = require("../Cli");
 const Lib_1 = require("../Lib");
-const ConfigurationProcessor_1 = require("../manager/configuration_processor/ConfigurationProcessor");
+const DockerContainerIdProvider_1 = require("../provider/container_id/impl/DockerContainerIdProvider");
+const DockerInspectProvider_1 = require("../provider/inspect/impl/DockerInspectProvider");
+const ContainersProcessor_1 = require("../manager/containers_processor/ContainersProcessor");
+const ContainerStateMonitor_1 = require("../manager/container_state_monitor/ContainerStateMonitor");
+const ContainerFinder_1 = require("../manager/container_finder/ContainerFinder");
 const container = new inversify_1.Container();
 container
     .bind(types_1.default.App)
@@ -35,16 +35,16 @@ container
     .to(DockerInspectProvider_1.DockerInspectProvider)
     .inSingletonScope();
 container
-    .bind(types_1.default.ConfigurationProcessor)
-    .to(ConfigurationProcessor_1.ConfigurationProcessor)
+    .bind(types_1.default.ContainersProcessor)
+    .to(ContainersProcessor_1.ContainersProcessor)
     .inSingletonScope();
 container
-    .bind(types_1.default.ContainerChecker)
-    .to(ContainerChecker_1.ContainerChecker)
+    .bind(types_1.default.ContainerStateMonitor)
+    .to(ContainerStateMonitor_1.ContainerStateMonitor)
     .inSingletonScope();
 container
-    .bind(types_1.default.ContainerGetter)
-    .to(ContainerGetter_1.ContainerGetter)
+    .bind(types_1.default.ContainerFinder)
+    .to(ContainerFinder_1.ContainerFinder)
     .inSingletonScope();
 exports.default = container;
 //# sourceMappingURL=container.js.map

@@ -20,15 +20,21 @@ exports.Container = Container_1.Container;
 const ConsoleLogger_1 = require("./utils/log/impl/ConsoleLogger");
 const ContainerState_1 = require("./model/container_state/ContainerState");
 exports.ContainerState = ContainerState_1.ContainerState;
-const Configuration_1 = require("./model/configuration/Configuration");
+const Configuration_1 = require("./manager/containers_processor/configuration/Configuration");
 exports.Configuration = Configuration_1.Configuration;
-const ContainerRequest_1 = require("./model/configuration/ContainerRequest");
+const ContainerRequest_1 = require("./manager/containers_processor/configuration/ContainerRequest");
 exports.ContainerRequest = ContainerRequest_1.ContainerRequest;
+const ConsumerConfig_1 = require("./manager/containers_processor/configuration/consumer_config/ConsumerConfig");
+exports.ConsumerConfig = ConsumerConfig_1.ConsumerConfig;
+const ConsoleConsumerConfig_1 = require("./manager/containers_processor/configuration/consumer_config/impl/ConsoleConsumerConfig");
+exports.ConsoleConsumerConfig = ConsoleConsumerConfig_1.ConsoleConsumerConfig;
+const SlackConsumerConfig_1 = require("./manager/containers_processor/configuration/consumer_config/impl/SlackConsumerConfig");
+exports.SlackConsumerConfig = SlackConsumerConfig_1.SlackConsumerConfig;
 const containersHealth = function containersHealth(configuration) {
     return __awaiter(this, void 0, void 0, function* () {
         container_1.default.bind(types_1.default.Logger).to(ConsoleLogger_1.ConsoleLogger);
         const lib = container_1.default.get(types_1.default.Lib);
-        return yield lib.get(configuration);
+        return yield lib.check(configuration);
     });
 };
 exports.containersHealth = containersHealth;

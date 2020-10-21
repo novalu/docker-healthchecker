@@ -8,6 +8,10 @@ class FakeContainerIdProvider implements ContainerIdProvider {
         return "";
     }
 
+    public async getContainerIdByName(name: string): Promise<string> {
+        return "";
+    }
+
 }
 
 export { FakeContainerIdProvider }

@@ -16,7 +16,7 @@ class SlackConsumer implements Consumer {
     ) {
     }
 
-    private createFields(container: Container): any[] {
+    private createFields(container: Container): any[] {
         const fields = [];
         fields.push({
             title: "Image",

@@ -12,6 +12,13 @@ class DockerContainerIdProvider implements ContainerIdProvider {
         return out === "" ? undefined : out;
     }
 
+    public async getContainerIdByName(name: string): Promise<string> {
+        const execShPromise = execSh.promise;
+        const result = await execShPromise(`docker ps -aqf "name=${name}"`, true);
+        const out = result.stdout.trim();
+        return out === "" ? undefined : out;
+    }
+
 }
 
 export { DockerContainerIdProvider }

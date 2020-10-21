@@ -6,10 +6,10 @@ const TYPES = {
     Lib: Symbol("Lib"),
     ContainerIdProvider: Symbol("ContainerIdProvider"),
     InspectProvider: Symbol("InspectProvider"),
-    ConfigurationProcessor: Symbol("ConfigurationProcessor"),
-    ContainerChecker: Symbol("ContainerChecker"),
-    ContainerGetter: Symbol("ContainerGetter"),
-    Messenger: Symbol("Messenger"),
+    ContainersProcessor: Symbol("ContainersProcessor"),
+    ContainerStateMonitor: Symbol("ContainerStateMonitor"),
+    ContainerFinder: Symbol("ContainerFinder"),
+    Consumer: Symbol("Consumer"),
     Logger: Symbol("Logger")
 };
 exports.default = TYPES;

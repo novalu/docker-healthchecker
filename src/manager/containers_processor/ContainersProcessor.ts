@@ -21,7 +21,9 @@ class ContainersProcessor {
     private getImagesSchema(): any {
         return Joi.array().items(Joi.object({
             image: Joi.string().required(),
-            alias: Joi.string()
+            name: Joi.string(),
+            alias: Joi.string(),
+            useName: Joi.boolean()
         }));
     }
 
@@ -40,7 +42,7 @@ class ContainersProcessor {
                     if (!validationResult.error) {
                         for (const imageDef of imagesDef) {
                             const alias = imageDef.alias ?? imageDef.image;
-                            images.push(new ContainerRequest(imageDef.image, alias));
+                            images.push(new ContainerRequest(alias, imageDef.useName, imageDef.image, imageDef.name));
                         }
                         return images;
                     } else {
@@ -61,7 +63,7 @@ class ContainersProcessor {
 
     public async process(configuration: Configuration): Promise<Container[]> {
         const containers = [];
-        const imagesResult = Joi.array().items(Joi.string()).validate(configuration.images);
+        const imagesResult = Joi.array().items(Joi.string()).validate(configuration.images); // TODO validate ContainerRequest
         if (imagesResult.error) {
             throw new Error("Provided images are not valid");
         }

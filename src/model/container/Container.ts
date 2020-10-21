@@ -4,6 +4,7 @@ import { ContainerState } from "../container_state/ContainerState";
 class Container {
     constructor(
         public id: string,
+        public name: string,
         public image: string,
         public alias: string,
         public state: ContainerState,
