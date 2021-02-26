@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SlackConsumer = exports.ConsoleConsumer = exports.ContainerDefinition = exports.PlainConfiguration = exports.FileConfiguration = exports.Configuration = exports.ContainerState = exports.Container = exports.containersHealth = void 0;
+exports.LoggerConsumerOptions = exports.SlackConsumerOptions = exports.ConsoleConsumerOptions = exports.SlackConsumer = exports.ConsoleConsumer = exports.ContainerDefinition = exports.PlainConfiguration = exports.FileConfiguration = exports.Configuration = exports.ContainerState = exports.Container = exports.containersHealth = void 0;
 require("reflect-metadata");
 const container_1 = __importDefault(require("./di/container"));
 const types_1 = __importDefault(require("./di/types"));
@@ -33,6 +33,12 @@ const PlainConfiguration_1 = require("./model/configuration/impl/PlainConfigurat
 Object.defineProperty(exports, "PlainConfiguration", { enumerable: true, get: function () { return PlainConfiguration_1.PlainConfiguration; } });
 const FileConfiguration_1 = require("./model/configuration/impl/FileConfiguration");
 Object.defineProperty(exports, "FileConfiguration", { enumerable: true, get: function () { return FileConfiguration_1.FileConfiguration; } });
+const ConsoleConsumerOptions_1 = require("./model/consumer_options/impl/ConsoleConsumerOptions");
+Object.defineProperty(exports, "ConsoleConsumerOptions", { enumerable: true, get: function () { return ConsoleConsumerOptions_1.ConsoleConsumerOptions; } });
+const SlackConsumerOptions_1 = require("./model/consumer_options/impl/SlackConsumerOptions");
+Object.defineProperty(exports, "SlackConsumerOptions", { enumerable: true, get: function () { return SlackConsumerOptions_1.SlackConsumerOptions; } });
+const LoggerConsumerOptions_1 = require("./model/consumer_options/impl/LoggerConsumerOptions");
+Object.defineProperty(exports, "LoggerConsumerOptions", { enumerable: true, get: function () { return LoggerConsumerOptions_1.LoggerConsumerOptions; } });
 const containersHealth = function containersHealth(configuration) {
     return __awaiter(this, void 0, void 0, function* () {
         container_1.default.bind(types_1.default.Logger).to(ConsoleLogger_1.ConsoleLogger);

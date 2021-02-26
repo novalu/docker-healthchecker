@@ -1,6 +1,6 @@
 import {ConsumerOptions} from "../ConsumerOptions";
 
-class SlackConsumerOptions extends ConsumerOptions {
+export class SlackConsumerOptions extends ConsumerOptions {
     type = ConsumerOptions.CONSUMER_TYPE_SLACK;
 
     constructor(
@@ -11,5 +11,3 @@ class SlackConsumerOptions extends ConsumerOptions {
     }
 
 }
-
-export { SlackConsumerOptions }
