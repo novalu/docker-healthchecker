@@ -6,7 +6,7 @@ import {Logger} from "../../utils/log/Logger";
 import { Container } from "../../model/container/Container";
 import {TimeUtils} from "../../utils/TimeUtils";
 import { ContainerState } from "../../model/container_state/ContainerState";
-import { ContainerRequest } from "../containers_processor/configuration/ContainerRequest";
+import {ContainerDefinition} from "../../model/container_definition/ContainerDefinition";
 
 @injectable()
 class ContainerFinder {
@@ -17,7 +17,7 @@ class ContainerFinder {
         @inject(TYPES.Logger) private logger: Logger
     ) {}
 
-    private getHealth(parsedContainer: any): ContainerState {
+    private getState(parsedContainer: any): ContainerState {
         if (parsedContainer.State.Health) {
             const healthStatus = parsedContainer.State.Health.Status;
             switch (healthStatus) {
@@ -36,46 +36,54 @@ class ContainerFinder {
         }
     }
 
-    private getContainerFromInspect(inspect: string, name: string, image: string, alias: string): Container {
-        const parsedInspect = JSON.parse(inspect);
+    private getContainerFromInspect(inspectData: string, alias: string): Container {
+        const parsedInspect = JSON.parse(inspectData);
         const parsedContainer = parsedInspect[0];
         const id = (parsedContainer.Id as string).substr(12);
-        const health = this.getHealth(parsedContainer);
+        const name = (parsedContainer.Name as string);
+        const image = (parsedContainer.Config.Image as string);
+        const state = this.getState(parsedContainer);
         const startedAt = TimeUtils.moment(parsedContainer.State.StartedAt);
-        const container = new Container(id, name, image, alias, health, startedAt);
-        return container;
+        return new Container(id, name, image, alias, state, startedAt);
     }
 
-    public async findContainer(container: ContainerRequest | string): Promise<Container> {
-        let name: string = "";
-        let image: string = "";
-        let containerId: string;
-        if (container instanceof ContainerRequest) {
-            if (container.useName) {
-                name = container.name;
-                containerId = await this.containerIdProvider.getContainerIdByName(container.name);
-            } else {
-                image = container.image;
-                containerId = await this.containerIdProvider.getContainerIdByImage(container.image);
-            }
-        } else {
-            image = container;
-            containerId = await this.containerIdProvider.getContainerIdByImage(container);
-        }
+    private getNotFoundContainer(image: string, name: string, alias: string): Container {
+        return new Container(undefined, name, image, alias, ContainerState.NOT_FOUND, undefined);
+    }
 
-        const alias = container instanceof ContainerRequest ? container.alias : container;
+    private async getContainerById(containerId: string, alias: string): Promise<Container> {
+        const inspectOutput = await this.inspectProvider.getInspectForId(containerId);
+        if (inspectOutput !== undefined) {
+            return this.getContainerFromInspect(inspectOutput, alias);
+        } else {
+            this.logger.warn(`Cannot inspect container from image ${alias}.`);
+        }
+        return undefined;
+    }
+
+    public async getContainerByImage(image: string): Promise<Container> {
+        const containerId = await this.containerIdProvider.getContainerIdByImage(image);
         if (containerId !== undefined) {
-            const inspectOutput = await this.inspectProvider.getInspectForId(containerId);
-            if (inspectOutput !== undefined) {
-                return this.getContainerFromInspect(inspectOutput, name, image, alias);
-            } else {
-                this.logger.warn(`Cannot inspect container from image ${image}.`);
-            }
+            return this.getContainerById(containerId, image);
         } else {
             this.logger.warn(`Container for image ${image} not found.`);
+            return this.getNotFoundContainer(image, "", image);
         }
+    }
 
-        return new Container("n/a", name, image, alias, ContainerState.DOWN, undefined);
+    public async getContainerByDefinition(definition: ContainerDefinition): Promise<Container> {
+        let containerId: string;
+        if (definition.name) {
+            containerId = await this.containerIdProvider.getContainerIdByName(definition.name);
+        } else if (definition.image) {
+            containerId = await this.containerIdProvider.getContainerIdByImage(definition.image);
+        }
+        if (containerId !== undefined) {
+            return this.getContainerById(containerId, definition.alias);
+        } else {
+            this.logger.warn(`Container for image ${definition.alias} not found.`);
+            return this.getNotFoundContainer(definition.image, definition.name, definition.alias);
+        }
     }
 
 }

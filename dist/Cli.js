@@ -24,14 +24,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Cli = void 0;
 const yargs_1 = __importDefault(require("yargs"));
 const inversify_1 = require("inversify");
 const types_1 = __importDefault(require("./di/types"));
 const ContainerStateMonitor_1 = require("./manager/container_state_monitor/ContainerStateMonitor");
 const ContainersProcessor_1 = require("./manager/containers_processor/ContainersProcessor");
-const Configuration_1 = require("./manager/containers_processor/configuration/Configuration");
-const ConsoleConsumerConfig_1 = require("./manager/containers_processor/configuration/consumer_config/impl/ConsoleConsumerConfig");
-const SlackConsumerConfig_1 = require("./manager/containers_processor/configuration/consumer_config/impl/SlackConsumerConfig");
+const lodash_1 = __importDefault(require("lodash"));
+const PlainConfiguration_1 = require("./model/configuration/impl/PlainConfiguration");
+const FileConfiguration_1 = require("./model/configuration/impl/FileConfiguration");
+const ConsoleConsumerOptions_1 = require("./model/consumer_options/impl/ConsoleConsumerOptions");
+const SlackConsumerOptions_1 = require("./model/consumer_options/impl/SlackConsumerOptions");
 let Cli = class Cli {
     constructor(containerStateMonitor, containersProcessor, logger) {
         this.containerStateMonitor = containerStateMonitor;
@@ -48,8 +51,8 @@ let Cli = class Cli {
                 .describe("image", "Docker image to check. Could be defined more times.")
                 .array("image")
                 .string("image")
-                .describe("images-def", "JSON file with image definition in format [{image: string, alias: string}, ...]")
-                .string("images-def")
+                .describe("images-file", "JSON file with image definition in format [{name: string, image: string, alias: string}, ...]")
+                .string("images-file")
                 .group(["console-enabled", "console-force"], "Console output:")
                 .describe("console-enabled", "Whether program should output to console")
                 .describe("console-force", "Whether program should output even if containers are up")
@@ -65,14 +68,28 @@ let Cli = class Cli {
             })
                 .argv;
             // console.log(JSON.stringify(argv));
-            const consumerConfigs = [];
-            if (argv.consoleEnabled !== undefined && argv.consoleEnabled) {
-                consumerConfigs.push(new ConsoleConsumerConfig_1.ConsoleConsumerConfig(argv.consoleForce !== undefined && argv.consoleForce));
+            // TODO validate with joi
+            const consumerOptions = [];
+            if (argv.consoleEnabled !== undefined && lodash_1.default.isBoolean(argv.consoleEnabled) && argv.consoleEnabled) {
+                const consoleForce = (argv.consoleForce !== undefined && lodash_1.default.isBoolean(argv.consoleForce)) ? argv.consoleForce : false;
+                consumerOptions.push(new ConsoleConsumerOptions_1.ConsoleConsumerOptions(consoleForce));
             }
-            if (argv.slackEnabled !== undefined && argv.slackEnabled) {
-                consumerConfigs.push(new SlackConsumerConfig_1.SlackConsumerConfig(argv.slackWebhook, argv.slackForce !== undefined && argv.slackForce));
+            if (argv.slackEnabled !== undefined && lodash_1.default.isBoolean(argv.slackEnabled) && argv.slackEnabled) {
+                const slackWebhook = argv.slackWebhook;
+                const slackForce = (argv.slackForce !== undefined && lodash_1.default.isBoolean(argv.slackForce)) ? argv.slackForce : false;
+                consumerOptions.push(new SlackConsumerOptions_1.SlackConsumerOptions(slackWebhook, slackForce));
             }
-            const configuration = new Configuration_1.Configuration(argv.image, argv.imagesDef, consumerConfigs);
+            let configuration = undefined;
+            if (argv.image !== undefined) {
+                configuration = new PlainConfiguration_1.PlainConfiguration(argv.image, consumerOptions);
+            }
+            else if (argv.imagesFile !== undefined) {
+                configuration = new FileConfiguration_1.FileConfiguration(argv.imagesFile, consumerOptions);
+            }
+            else {
+                console.log("Image or imagesFile parameter should be provided.");
+                return;
+            }
             const containers = yield this.containersProcessor.process(configuration);
             yield this.containerStateMonitor.processState(containers, configuration);
             return true;

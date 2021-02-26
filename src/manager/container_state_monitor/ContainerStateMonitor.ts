@@ -5,45 +5,39 @@ import lodash from "lodash";
 import container from "../../di/container";
 import { Container } from "../../model/container/Container";
 import { ContainerState } from "../../model/container_state/ContainerState";
-import { SlackConsumer } from "../consumer/impl/SlackConsumer";
-import { LoggerConsumer } from "../consumer/impl/LoggerConsumer";
-import { ConsoleConsumer } from "../consumer/impl/ConsoleConsumer";
-import { Consumer } from "../consumer/Consumer";
-import {Configuration} from "../containers_processor/configuration/Configuration";
-import { ConsumerConfig } from "../containers_processor/configuration/consumer_config/ConsumerConfig";
-import { LoggerConsumerConfig } from "../containers_processor/configuration/consumer_config/impl/LoggerConsumerConfig";
-import { ConsoleConsumerConfig } from "../containers_processor/configuration/consumer_config/impl/ConsoleConsumerConfig";
-import { SlackConsumerConfig } from "../containers_processor/configuration/consumer_config/impl/SlackConsumerConfig";
+import {Consumer} from "../../model/consumer/Consumer";
+import {LoggerConsumer} from "../../model/consumer/impl/LoggerConsumer";
+import {ConsoleConsumer} from "../../model/consumer/impl/ConsoleConsumer";
+import {SlackConsumer} from "../../model/consumer/impl/SlackConsumer";
+import { Configuration } from "../../model/configuration/Configuration";
+import {LoggerConsumerOptions} from "../../model/consumer_options/impl/LoggerConsumerOptions";
+import {ConsoleConsumerOptions} from "../../model/consumer_options/impl/ConsoleConsumerOptions";
+import {SlackConsumerOptions} from "../../model/consumer_options/impl/SlackConsumerOptions";
+import {ConsumerOptions} from "../../model/consumer_options/ConsumerOptions";
 
 @injectable()
 class ContainerStateMonitor {
 
     constructor(
-        @inject(TYPES.Logger) private logger: Logger
+        @inject(TYPES.Logger) private logger: Logger,
+        @inject(TYPES.SlackConsumer) private slackConsumer: SlackConsumer,
+        @inject(TYPES.LoggerConsumer) private loggerConsumer: LoggerConsumer,
+        @inject(TYPES.ConsoleConsumer) private consoleConsumer: ConsoleConsumer
     ) {}
 
-    private getConsumer(consumerConfig: ConsumerConfig): any {
-        if (consumerConfig instanceof LoggerConsumerConfig) {
-            return LoggerConsumer;
-        } else if (consumerConfig instanceof ConsoleConsumerConfig) {
-            return ConsoleConsumer;
-        } else if (consumerConfig instanceof SlackConsumerConfig) {
-            return SlackConsumer;
-        } else {
-            throw new Error("Unknown messenger");
-        }
-    }
-
     public async processState(containers: Container[], configuration: Configuration) {
-        const healthy = lodash.every(containers, (container: Container) => {
+        const everyHealthy = lodash.every(containers, (container: Container) => {
             return container.state.id === ContainerState.RUNNING_HEALTHY.id;
         });
-        for (const consumerConfig of configuration.consumerConfigs) {
-            if (container.isBound(TYPES.Consumer)) container.unbind(TYPES.Consumer);
-            container.bind<Consumer>(TYPES.Consumer).to(this.getConsumer(consumerConfig));
-            const messenger = container.get<Consumer>(TYPES.Consumer);
-            if (!healthy || consumerConfig.force) {
-                await messenger.consume(containers, consumerConfig);
+        for (const consumerOptions of configuration.consumerOptions) {
+            let consumer: Consumer;
+            switch (consumerOptions.type) {
+                case ConsumerOptions.CONSUMER_TYPE_SLACK: consumer = this.slackConsumer; break;
+                case ConsumerOptions.CONSUMER_TYPE_LOGGER: consumer = this.loggerConsumer; break;
+                case ConsumerOptions.CONSUMER_TYPE_CONSOLE: consumer = this.consoleConsumer; break;
+            }
+            if (!everyHealthy || consumerOptions.force) {
+                await consumer.consume(containers, consumerOptions);
             }
         }
     }

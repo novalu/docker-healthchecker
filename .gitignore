@@ -1,13 +1,12 @@
-############### APP ##################
-
 node_modules
 
 # ignore all generated js and map
 src/**/*.js
 src/**/*.js.map
 
-############## .IDEA #################
-
 .directory
 
 .idea
+
+definition-example-test.json
+

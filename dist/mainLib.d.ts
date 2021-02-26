@@ -1,10 +1,12 @@
 import "reflect-metadata";
 import { Container } from "./model/container/Container";
 import { ContainerState } from "./model/container_state/ContainerState";
-import { Configuration } from "./manager/containers_processor/configuration/Configuration";
-import { ContainerRequest } from "./manager/containers_processor/configuration/ContainerRequest";
-import { ConsumerConfig } from "./manager/containers_processor/configuration/consumer_config/ConsumerConfig";
-import { ConsoleConsumerConfig } from "./manager/containers_processor/configuration/consumer_config/impl/ConsoleConsumerConfig";
-import { SlackConsumerConfig } from "./manager/containers_processor/configuration/consumer_config/impl/SlackConsumerConfig";
+import { Configuration } from "./model/configuration/Configuration";
+import { ContainerDefinition } from "./model/container_definition/ContainerDefinition";
+import { Consumer } from "./model/consumer/Consumer";
+import { ConsoleConsumer } from "./model/consumer/impl/ConsoleConsumer";
+import { SlackConsumer } from "./model/consumer/impl/SlackConsumer";
+import { PlainConfiguration } from "./model/configuration/impl/PlainConfiguration";
+import { FileConfiguration } from "./model/configuration/impl/FileConfiguration";
 declare const containersHealth: (configuration: Configuration) => Promise<Container[]>;
-export { containersHealth, Container, ContainerState, Configuration, ContainerRequest, ConsumerConfig, ConsoleConsumerConfig, SlackConsumerConfig };
+export { containersHealth, Container, ContainerState, Configuration, FileConfiguration, PlainConfiguration, ContainerDefinition, Consumer, ConsoleConsumer, SlackConsumer };

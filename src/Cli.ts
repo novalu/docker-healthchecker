@@ -6,9 +6,11 @@ import TYPES from "./di/types";
 import { Logger } from "./utils/log/Logger";
 import { ContainerStateMonitor } from "./manager/container_state_monitor/ContainerStateMonitor";
 import { ContainersProcessor } from "./manager/containers_processor/ContainersProcessor";
-import { Configuration } from "./manager/containers_processor/configuration/Configuration";
-import { ConsoleConsumerConfig } from "./manager/containers_processor/configuration/consumer_config/impl/ConsoleConsumerConfig";
-import { SlackConsumerConfig } from "./manager/containers_processor/configuration/consumer_config/impl/SlackConsumerConfig";
+import lodash from "lodash";
+import {PlainConfiguration} from "./model/configuration/impl/PlainConfiguration";
+import {FileConfiguration} from "./model/configuration/impl/FileConfiguration";
+import {ConsoleConsumerOptions} from "./model/consumer_options/impl/ConsoleConsumerOptions";
+import {SlackConsumerOptions} from "./model/consumer_options/impl/SlackConsumerOptions";
 
 @injectable()
 class Cli {
@@ -28,8 +30,8 @@ class Cli {
             .describe("image", "Docker image to check. Could be defined more times.")
             .array("image")
             .string("image")
-            .describe("images-def", "JSON file with image definition in format [{image: string, alias: string}, ...]")
-            .string("images-def")
+            .describe("images-file", "JSON file with image definition in format [{name: string, image: string, alias: string}, ...]")
+            .string("images-file")
 
             .group(["console-enabled", "console-force"], "Console output:")
             .describe("console-enabled", "Whether program should output to console")
@@ -51,21 +53,29 @@ class Cli {
 
         // console.log(JSON.stringify(argv));
 
-        const consumerConfigs = [];
-        if (argv.consoleEnabled !== undefined && argv.consoleEnabled as boolean) {
-            consumerConfigs.push(new ConsoleConsumerConfig(argv.consoleForce !== undefined && argv.consoleForce as boolean))
+        // TODO validate with joi
+
+        const consumerOptions = [];
+        if (argv.consoleEnabled !== undefined && lodash.isBoolean(argv.consoleEnabled) && argv.consoleEnabled) {
+            const consoleForce = (argv.consoleForce !== undefined && lodash.isBoolean(argv.consoleForce)) ? argv.consoleForce as boolean : false;
+            consumerOptions.push(new ConsoleConsumerOptions(consoleForce))
         }
 
-        if (argv.slackEnabled !== undefined && argv.slackEnabled as boolean) {
-            consumerConfigs.push(new SlackConsumerConfig(argv.slackWebhook as string,
-                argv.slackForce !== undefined && argv.slackForce as boolean))
+        if (argv.slackEnabled !== undefined && lodash.isBoolean(argv.slackEnabled) && argv.slackEnabled) {
+            const slackWebhook = argv.slackWebhook as string;
+            const slackForce = (argv.slackForce !== undefined && lodash.isBoolean(argv.slackForce)) ? argv.slackForce as boolean : false;
+            consumerOptions.push(new SlackConsumerOptions(slackWebhook, slackForce))
         }
 
-        const configuration = new Configuration(
-            argv.image as string[],
-            argv.imagesDef as string,
-            consumerConfigs
-        );
+        let configuration = undefined;
+        if (argv.image !== undefined) {
+            configuration = new PlainConfiguration(argv.image as string[], consumerOptions);
+        } else if (argv.imagesFile !== undefined) {
+            configuration = new FileConfiguration(argv.imagesFile as string, consumerOptions);
+        } else {
+            console.log("Image or imagesFile parameter should be provided.");
+            return;
+        }
 
         const containers = await this.containersProcessor.process(configuration);
 

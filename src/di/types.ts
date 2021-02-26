@@ -9,7 +9,10 @@ const TYPES = {
     ContainersProcessor: Symbol("ContainersProcessor"),
     ContainerStateMonitor: Symbol("ContainerStateMonitor"),
     ContainerFinder: Symbol("ContainerFinder"),
-    Consumer: Symbol("Consumer"),
+
+    SlackConsumer: Symbol("SlackConsumer"),
+    LoggerConsumer: Symbol("LoggerConsumer"),
+    ConsoleConsumer: Symbol("ConsoleConsumer"),
 
     Logger: Symbol("Logger")
 }

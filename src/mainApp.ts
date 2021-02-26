@@ -7,24 +7,29 @@ import { App } from "./App";
 import {Logger} from "./utils/log/Logger";
 import {SignaleLogger} from "./utils/log/impl/SignaleLogger";
 import {NoOpLogger} from "./utils/log/impl/NoOpLogger";
-import { Configuration } from "./manager/containers_processor/configuration/Configuration";
-import { LoggerConsumerConfig } from "./manager/containers_processor/configuration/consumer_config/impl/LoggerConsumerConfig";
+import { Configuration } from "./model/configuration/Configuration";
+import {LoggerConsumerOptions} from "./model/consumer_options/impl/LoggerConsumerOptions";
+import {PlainConfiguration} from "./model/configuration/impl/PlainConfiguration";
+import {FileConfiguration} from "./model/configuration/impl/FileConfiguration";
 
 async function startApp(configuration: Configuration): Promise<App> {
     container.bind<Logger>(TYPES.Logger).to(SignaleLogger);
 
     const app = container.get<App>(TYPES.App);
     const started = await app.start(configuration);
-    return started ? app : undefined;
+    return started ? app : undefined;
 }
 
 (async () => {
     let app;
     try {
-        const consumerConfigs = [ new LoggerConsumerConfig(true) ];
-        const configuration = new Configuration(
-          ["test"], "images-def-example.json", consumerConfigs
-        );
+        const consumerOptions = [ new LoggerConsumerOptions(true) ];
+        // const configuration = new PlainConfiguration(
+        //   ["mongo-festapp-nocvedcu-local"], consumerOptions
+        // );
+        const configuration = new FileConfiguration(
+            "definition-example-test.json", consumerOptions
+        )
         app = await startApp(configuration);
     } catch (err) {
         const msg = "Cannot start application";

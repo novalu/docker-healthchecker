@@ -24,47 +24,42 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ContainerStateMonitor = void 0;
 const inversify_1 = require("inversify");
 const types_1 = __importDefault(require("../../di/types"));
 const lodash_1 = __importDefault(require("lodash"));
-const container_1 = __importDefault(require("../../di/container"));
 const ContainerState_1 = require("../../model/container_state/ContainerState");
-const SlackConsumer_1 = require("../consumer/impl/SlackConsumer");
-const LoggerConsumer_1 = require("../consumer/impl/LoggerConsumer");
-const ConsoleConsumer_1 = require("../consumer/impl/ConsoleConsumer");
-const LoggerConsumerConfig_1 = require("../containers_processor/configuration/consumer_config/impl/LoggerConsumerConfig");
-const ConsoleConsumerConfig_1 = require("../containers_processor/configuration/consumer_config/impl/ConsoleConsumerConfig");
-const SlackConsumerConfig_1 = require("../containers_processor/configuration/consumer_config/impl/SlackConsumerConfig");
+const LoggerConsumer_1 = require("../../model/consumer/impl/LoggerConsumer");
+const ConsoleConsumer_1 = require("../../model/consumer/impl/ConsoleConsumer");
+const SlackConsumer_1 = require("../../model/consumer/impl/SlackConsumer");
+const ConsumerOptions_1 = require("../../model/consumer_options/ConsumerOptions");
 let ContainerStateMonitor = class ContainerStateMonitor {
-    constructor(logger) {
+    constructor(logger, slackConsumer, loggerConsumer, consoleConsumer) {
         this.logger = logger;
-    }
-    getConsumer(consumerConfig) {
-        if (consumerConfig instanceof LoggerConsumerConfig_1.LoggerConsumerConfig) {
-            return LoggerConsumer_1.LoggerConsumer;
-        }
-        else if (consumerConfig instanceof ConsoleConsumerConfig_1.ConsoleConsumerConfig) {
-            return ConsoleConsumer_1.ConsoleConsumer;
-        }
-        else if (consumerConfig instanceof SlackConsumerConfig_1.SlackConsumerConfig) {
-            return SlackConsumer_1.SlackConsumer;
-        }
-        else {
-            throw new Error("Unknown messenger");
-        }
+        this.slackConsumer = slackConsumer;
+        this.loggerConsumer = loggerConsumer;
+        this.consoleConsumer = consoleConsumer;
     }
     processState(containers, configuration) {
         return __awaiter(this, void 0, void 0, function* () {
-            const healthy = lodash_1.default.every(containers, (container) => {
+            const everyHealthy = lodash_1.default.every(containers, (container) => {
                 return container.state.id === ContainerState_1.ContainerState.RUNNING_HEALTHY.id;
             });
-            for (const consumerConfig of configuration.consumerConfigs) {
-                if (container_1.default.isBound(types_1.default.Consumer))
-                    container_1.default.unbind(types_1.default.Consumer);
-                container_1.default.bind(types_1.default.Consumer).to(this.getConsumer(consumerConfig));
-                const messenger = container_1.default.get(types_1.default.Consumer);
-                if (!healthy || consumerConfig.force) {
-                    yield messenger.consume(containers, consumerConfig);
+            for (const consumerOptions of configuration.consumerOptions) {
+                let consumer;
+                switch (consumerOptions.type) {
+                    case ConsumerOptions_1.ConsumerOptions.CONSUMER_TYPE_SLACK:
+                        consumer = this.slackConsumer;
+                        break;
+                    case ConsumerOptions_1.ConsumerOptions.CONSUMER_TYPE_LOGGER:
+                        consumer = this.loggerConsumer;
+                        break;
+                    case ConsumerOptions_1.ConsumerOptions.CONSUMER_TYPE_CONSOLE:
+                        consumer = this.consoleConsumer;
+                        break;
+                }
+                if (!everyHealthy || consumerOptions.force) {
+                    yield consumer.consume(containers, consumerOptions);
                 }
             }
         });
@@ -73,7 +68,12 @@ let ContainerStateMonitor = class ContainerStateMonitor {
 ContainerStateMonitor = __decorate([
     inversify_1.injectable(),
     __param(0, inversify_1.inject(types_1.default.Logger)),
-    __metadata("design:paramtypes", [Object])
+    __param(1, inversify_1.inject(types_1.default.SlackConsumer)),
+    __param(2, inversify_1.inject(types_1.default.LoggerConsumer)),
+    __param(3, inversify_1.inject(types_1.default.ConsoleConsumer)),
+    __metadata("design:paramtypes", [Object, SlackConsumer_1.SlackConsumer,
+        LoggerConsumer_1.LoggerConsumer,
+        ConsoleConsumer_1.ConsoleConsumer])
 ], ContainerStateMonitor);
 exports.ContainerStateMonitor = ContainerStateMonitor;
 //# sourceMappingURL=ContainerStateMonitor.js.map

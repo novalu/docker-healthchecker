@@ -15,6 +15,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.FakeContainerIdProvider = void 0;
 const inversify_1 = require("inversify");
 let FakeContainerIdProvider = class FakeContainerIdProvider {
     getContainerIdByImage(image) {

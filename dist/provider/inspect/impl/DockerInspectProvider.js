@@ -24,6 +24,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.DockerInspectProvider = void 0;
 const execSh = require("exec-sh");
 const inversify_1 = require("inversify");
 const types_1 = __importDefault(require("../../../di/types"));

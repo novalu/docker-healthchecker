@@ -18,6 +18,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.FakeInspectProvider = void 0;
 const inversify_1 = require("inversify");
 let FakeInspectProvider = class FakeInspectProvider {
     constructor() { }

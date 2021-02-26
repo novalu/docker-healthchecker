@@ -1,4 +1,4 @@
-import * as moment from "moment";
+import moment from "moment";
 import { ContainerState } from "../container_state/ContainerState";
 
 class Container {

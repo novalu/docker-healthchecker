@@ -8,8 +8,8 @@ import {NoOpLogger} from "./utils/log/impl/NoOpLogger";
 import {SignaleLogger} from "./utils/log/impl/SignaleLogger";
 import { Container } from "./model/container/Container";
 import { ContainersProcessor } from "./manager/containers_processor/ContainersProcessor";
-import { Configuration } from "./manager/containers_processor/configuration/Configuration";
 import {ContainerStateMonitor} from "./manager/container_state_monitor/ContainerStateMonitor";
+import { Configuration } from "./model/configuration/Configuration";
 
 @injectable()
 class Lib {

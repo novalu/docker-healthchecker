@@ -7,8 +7,10 @@ import Joi from "@hapi/joi";
 import {Logger} from "../../utils/log/Logger";
 import path from "path";
 import { ContainerFinder } from "../container_finder/ContainerFinder";
-import { ContainerRequest } from "./configuration/ContainerRequest";
-import { Configuration } from "./configuration/Configuration";
+import { ContainerDefinition } from "../../model/container_definition/ContainerDefinition";
+import { Configuration } from "../../model/configuration/Configuration";
+import {PlainConfiguration} from "../../model/configuration/impl/PlainConfiguration";
+import {FileConfiguration} from "../../model/configuration/impl/FileConfiguration";
 
 @injectable()
 class ContainersProcessor {
@@ -18,63 +20,75 @@ class ContainersProcessor {
         @inject(TYPES.Logger) private logger: Logger
     ) {}
 
-    private getImagesSchema(): any {
+    private getDefinitionsSchema(): any {
         return Joi.array().items(Joi.object({
-            image: Joi.string().required(),
+            image: Joi.string(),
             name: Joi.string(),
-            alias: Joi.string(),
-            useName: Joi.boolean()
+            alias: Joi.string().required()
         }));
     }
 
-    private async processImagesFile(imagesFile: string): Promise<string[]> {
-        const images = [];
-        const exists = await fs.pathExists(imagesFile);
+    private async processFile(filePath: string): Promise<ContainerDefinition[]> {
+        const containerDefinitions = [];
+        const exists = await fs.pathExists(filePath);
         if (exists) {
-            const stat = await fs.stat(imagesFile);
+            const stat = await fs.stat(filePath);
             if (stat.isFile()) {
-                const contents = (await fs.readFile(imagesFile)).toString();
+                const contents = (await fs.readFile(filePath)).toString();
                 const isJson = validator.isJSON(contents);
                 if (isJson) {
-                    const imagesDef = JSON.parse(contents);
-                    const imagesSchema = this.getImagesSchema();
-                    const validationResult = imagesSchema.validate(imagesDef);
+                    const definitions = JSON.parse(contents);
+                    const schema = this.getDefinitionsSchema();
+                    const validationResult = schema.validate(definitions);
                     if (!validationResult.error) {
-                        for (const imageDef of imagesDef) {
-                            const alias = imageDef.alias ?? imageDef.image;
-                            images.push(new ContainerRequest(alias, imageDef.useName, imageDef.image, imageDef.name));
+                        for (const definition of definitions) {
+                            containerDefinitions.push(new ContainerDefinition(definition.alias, definition.image, definition.name));
                         }
-                        return images;
                     } else {
-                        throw new Error("Images definition file has invalid content.");
+                        throw new Error("Definitions file has invalid content.");
                     }
-
                 } else {
-                    throw new Error("Images definition file is not a JSON.");
+                    throw new Error("Definitions file content is not a JSON.");
                 }
-
             } else {
-                throw new Error("Images definition is not a file.");
+                throw new Error("Definitions is not a file.");
             }
         } else {
-            throw new Error("Images definition file does not exist.")
+            throw new Error("Definitions file does not exist.")
         }
+        return containerDefinitions;
+    }
+
+    private async processFileConfiguration(configuration: FileConfiguration): Promise<Container[]> {
+        const definitions = await this.processFile(configuration.filePath);
+        const containers: Container[] = [];
+        for (const definition of definitions) {
+            const container = await this.containerFinder.getContainerByDefinition(definition);
+            if (container) {
+                containers.push(container);
+            }
+        }
+        return containers;
+    }
+
+    private async processPlainConfiguration(configuration: PlainConfiguration): Promise<Container[]> {
+        const images = configuration.images;
+        const containers: Container[] = [];
+        for (const image of images) {
+            const container = await this.containerFinder.getContainerByImage(image);
+            if (container) {
+                containers.push(container);
+            }
+        }
+        return containers;
     }
 
     public async process(configuration: Configuration): Promise<Container[]> {
-        const containers = [];
-        const imagesResult = Joi.array().items(Joi.string()).validate(configuration.images); // TODO validate ContainerRequest
-        if (imagesResult.error) {
-            throw new Error("Provided images are not valid");
+        if (configuration.type === Configuration.TYPE_FILE) {
+            return this.processFileConfiguration(configuration as FileConfiguration);
+        } else if (configuration.type === Configuration.TYPE_PLAIN) {
+            return this.processPlainConfiguration(configuration as PlainConfiguration)
         }
-        const images = [...(configuration.images ?? [])];
-        if (configuration.imagesDef) {
-            images.push(...(await this.processImagesFile(configuration.imagesDef)));
-        }
-        for (const image of images) {
-            containers.push(await this.containerFinder.findContainer(image));
-        }
-        return containers;
     }
 
 }

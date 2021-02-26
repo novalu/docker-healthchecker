@@ -1,0 +1,1 @@
+{"version":3,"file":"PlainConfiguration.js","sourceRoot":"","sources":["../../../../src/model/configuration/impl/PlainConfiguration.ts"],"names":[],"mappings":";;;AAAA,oDAAiD;AAGjD,MAAa,kBAAmB,SAAQ,6BAAa;IACjD,YACW,MAAgB,EACvB,eAAkC;QAElC,KAAK,CAAC,6BAAa,CAAC,UAAU,EAAE,eAAe,CAAC,CAAC;QAH1C,WAAM,GAAN,MAAM,CAAU;IAI3B,CAAC;CACJ;AAPD,gDAOC"}

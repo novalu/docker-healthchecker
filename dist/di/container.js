@@ -13,6 +13,9 @@ const DockerInspectProvider_1 = require("../provider/inspect/impl/DockerInspectP
 const ContainersProcessor_1 = require("../manager/containers_processor/ContainersProcessor");
 const ContainerStateMonitor_1 = require("../manager/container_state_monitor/ContainerStateMonitor");
 const ContainerFinder_1 = require("../manager/container_finder/ContainerFinder");
+const ConsoleConsumer_1 = require("../model/consumer/impl/ConsoleConsumer");
+const LoggerConsumer_1 = require("../model/consumer/impl/LoggerConsumer");
+const SlackConsumer_1 = require("../model/consumer/impl/SlackConsumer");
 const container = new inversify_1.Container();
 container
     .bind(types_1.default.App)
@@ -45,6 +48,18 @@ container
 container
     .bind(types_1.default.ContainerFinder)
     .to(ContainerFinder_1.ContainerFinder)
+    .inSingletonScope();
+container
+    .bind(types_1.default.ConsoleConsumer)
+    .to(ConsoleConsumer_1.ConsoleConsumer)
+    .inSingletonScope();
+container
+    .bind(types_1.default.LoggerConsumer)
+    .to(LoggerConsumer_1.LoggerConsumer)
+    .inSingletonScope();
+container
+    .bind(types_1.default.SlackConsumer)
+    .to(SlackConsumer_1.SlackConsumer)
     .inSingletonScope();
 exports.default = container;
 //# sourceMappingURL=container.js.map

@@ -1,0 +1,1 @@
+{"version":3,"file":"SlackConsumerOptions.js","sourceRoot":"","sources":["../../../../src/model/consumer_options/impl/SlackConsumerOptions.ts"],"names":[],"mappings":";;;AAAA,wDAAmD;AAEnD,MAAM,oBAAqB,SAAQ,iCAAe;IAG9C,YACW,OAAe,EACtB,KAAc;QAEd,KAAK,CAAC,KAAK,CAAC,CAAC;QAHN,YAAO,GAAP,OAAO,CAAQ;QAH1B,SAAI,GAAG,iCAAe,CAAC,mBAAmB,CAAC;IAO3C,CAAC;CAEJ;AAEQ,oDAAoB"}

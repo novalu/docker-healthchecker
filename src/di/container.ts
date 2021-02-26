@@ -12,6 +12,9 @@ import { DockerInspectProvider } from "../provider/inspect/impl/DockerInspectPro
 import { ContainersProcessor } from "../manager/containers_processor/ContainersProcessor";
 import { ContainerStateMonitor } from "../manager/container_state_monitor/ContainerStateMonitor";
 import { ContainerFinder } from "../manager/container_finder/ContainerFinder";
+import {ConsoleConsumer} from "../model/consumer/impl/ConsoleConsumer";
+import {LoggerConsumer} from "../model/consumer/impl/LoggerConsumer";
+import {SlackConsumer} from "../model/consumer/impl/SlackConsumer";
 
 const container = new Container();
 
@@ -48,6 +51,19 @@ container
 container
     .bind<ContainerFinder>(TYPES.ContainerFinder)
     .to(ContainerFinder)
+    .inSingletonScope();
+
+container
+    .bind<ConsoleConsumer>(TYPES.ConsoleConsumer)
+    .to(ConsoleConsumer)
+    .inSingletonScope();
+container
+    .bind<LoggerConsumer>(TYPES.LoggerConsumer)
+    .to(LoggerConsumer)
+    .inSingletonScope();
+container
+    .bind<SlackConsumer>(TYPES.SlackConsumer)
+    .to(SlackConsumer)
     .inSingletonScope();
 
 export default container;

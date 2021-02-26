@@ -3,7 +3,7 @@ import { ContainerIdProvider } from "./provider/container_id/ContainerIdProvider
 import { InspectProvider } from "./provider/inspect/InspectProvider";
 import { ContainerStateMonitor } from "./manager/container_state_monitor/ContainerStateMonitor";
 import { ContainersProcessor } from "./manager/containers_processor/ContainersProcessor";
-import { Configuration } from "./manager/containers_processor/configuration/Configuration";
+import { Configuration } from "./model/configuration/Configuration";
 declare class App {
     private containerStateMonitor;
     private containerIdProvider;

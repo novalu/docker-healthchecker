@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ContainerState = void 0;
 class ContainerState {
     constructor(id, text, color) {
         this.id = id;
@@ -13,4 +14,5 @@ ContainerState.RUNNING_HEALTHY = new ContainerState(2, "healthy", "#2EB886"); //
 ContainerState.RUNNING_UNHEALTHY = new ContainerState(3, "unhealthy", "#FF4454"); // container is running and health is: starting
 ContainerState.DOWN = new ContainerState(4, "down", "#FF4454"); // container is not running
 ContainerState.RUNNING_UNKNOWN = new ContainerState(5, "unknown", "#AAAAAA"); // container is running and health state not found
+ContainerState.NOT_FOUND = new ContainerState(6, "not found", "#AAAAAA"); // container is not found
 //# sourceMappingURL=ContainerState.js.map

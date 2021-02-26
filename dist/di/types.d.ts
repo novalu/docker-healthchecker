@@ -7,7 +7,9 @@ declare const TYPES: {
     ContainersProcessor: symbol;
     ContainerStateMonitor: symbol;
     ContainerFinder: symbol;
-    Consumer: symbol;
+    SlackConsumer: symbol;
+    LoggerConsumer: symbol;
+    ConsoleConsumer: symbol;
     Logger: symbol;
 };
 export default TYPES;

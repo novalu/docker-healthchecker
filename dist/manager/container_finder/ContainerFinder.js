@@ -24,19 +24,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ContainerFinder = void 0;
 const inversify_1 = require("inversify");
 const types_1 = __importDefault(require("../../di/types"));
 const Container_1 = require("../../model/container/Container");
 const TimeUtils_1 = require("../../utils/TimeUtils");
 const ContainerState_1 = require("../../model/container_state/ContainerState");
-const ContainerRequest_1 = require("../containers_processor/configuration/ContainerRequest");
 let ContainerFinder = class ContainerFinder {
     constructor(containerIdProvider, inspectProvider, logger) {
         this.containerIdProvider = containerIdProvider;
         this.inspectProvider = inspectProvider;
         this.logger = logger;
     }
-    getHealth(parsedContainer) {
+    getState(parsedContainer) {
         if (parsedContainer.State.Health) {
             const healthStatus = parsedContainer.State.Health.Status;
             switch (healthStatus) {
@@ -55,48 +55,59 @@ let ContainerFinder = class ContainerFinder {
             return ContainerState_1.ContainerState.RUNNING_UNKNOWN;
         }
     }
-    getContainerFromInspect(inspect, name, image, alias) {
-        const parsedInspect = JSON.parse(inspect);
+    getContainerFromInspect(inspectData, alias) {
+        const parsedInspect = JSON.parse(inspectData);
         const parsedContainer = parsedInspect[0];
         const id = parsedContainer.Id.substr(12);
-        const health = this.getHealth(parsedContainer);
+        const name = parsedContainer.Name;
+        const image = parsedContainer.Config.Image;
+        const state = this.getState(parsedContainer);
         const startedAt = TimeUtils_1.TimeUtils.moment(parsedContainer.State.StartedAt);
-        const container = new Container_1.Container(id, name, image, alias, health, startedAt);
-        return container;
+        return new Container_1.Container(id, name, image, alias, state, startedAt);
     }
-    findContainer(container) {
+    getNotFoundContainer(image, name, alias) {
+        return new Container_1.Container(undefined, name, image, alias, ContainerState_1.ContainerState.NOT_FOUND, undefined);
+    }
+    getContainerById(containerId, alias) {
         return __awaiter(this, void 0, void 0, function* () {
-            let name = "";
-            let image = "";
-            let containerId;
-            if (container instanceof ContainerRequest_1.ContainerRequest) {
-                if (container.useName) {
-                    name = container.name;
-                    containerId = yield this.containerIdProvider.getContainerIdByName(container.name);
-                }
-                else {
-                    image = container.image;
-                    containerId = yield this.containerIdProvider.getContainerIdByImage(container.image);
-                }
+            const inspectOutput = yield this.inspectProvider.getInspectForId(containerId);
+            if (inspectOutput !== undefined) {
+                return this.getContainerFromInspect(inspectOutput, alias);
             }
             else {
-                image = container;
-                containerId = yield this.containerIdProvider.getContainerIdByImage(container);
+                this.logger.warn(`Cannot inspect container from image ${alias}.`);
             }
-            const alias = container instanceof ContainerRequest_1.ContainerRequest ? container.alias : container;
+            return undefined;
+        });
+    }
+    getContainerByImage(image) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const containerId = yield this.containerIdProvider.getContainerIdByImage(image);
             if (containerId !== undefined) {
-                const inspectOutput = yield this.inspectProvider.getInspectForId(containerId);
-                if (inspectOutput !== undefined) {
-                    return this.getContainerFromInspect(inspectOutput, name, image, alias);
-                }
-                else {
-                    this.logger.warn(`Cannot inspect container from image ${image}.`);
-                }
+                return this.getContainerById(containerId, image);
             }
             else {
                 this.logger.warn(`Container for image ${image} not found.`);
+                return this.getNotFoundContainer(image, "", image);
             }
-            return new Container_1.Container("n/a", name, image, alias, ContainerState_1.ContainerState.DOWN, undefined);
+        });
+    }
+    getContainerByDefinition(definition) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let containerId;
+            if (definition.name) {
+                containerId = yield this.containerIdProvider.getContainerIdByName(definition.name);
+            }
+            else if (definition.image) {
+                containerId = yield this.containerIdProvider.getContainerIdByImage(definition.image);
+            }
+            if (containerId !== undefined) {
+                return this.getContainerById(containerId, definition.alias);
+            }
+            else {
+                this.logger.warn(`Container for image ${definition.alias} not found.`);
+                return this.getNotFoundContainer(definition.image, definition.name, definition.alias);
+            }
         });
     }
 };

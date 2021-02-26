@@ -8,7 +8,7 @@ import {NoOpLogger} from "./utils/log/impl/NoOpLogger";
 import {SignaleLogger} from "./utils/log/impl/SignaleLogger";
 import { ContainerStateMonitor } from "./manager/container_state_monitor/ContainerStateMonitor";
 import { ContainersProcessor } from "./manager/containers_processor/ContainersProcessor";
-import { Configuration } from "./manager/containers_processor/configuration/Configuration";
+import { Configuration } from "./model/configuration/Configuration";
 
 @injectable()
 class App {
