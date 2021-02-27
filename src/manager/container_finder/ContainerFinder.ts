@@ -40,7 +40,7 @@ class ContainerFinder {
         const parsedInspect = JSON.parse(inspectData);
         const parsedContainer = parsedInspect[0];
         const id = (parsedContainer.Id as string).substr(12);
-        const name = (parsedContainer.Name as string);
+        const name = (parsedContainer.Name as string).substr(1);
         const image = (parsedContainer.Config.Image as string);
         const state = this.getState(parsedContainer);
         const startedAt = TimeUtils.moment(parsedContainer.State.StartedAt);
