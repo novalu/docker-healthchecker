@@ -2,11 +2,11 @@ import { Container } from "inversify";
 import TYPES from "./types";
 import { Logger } from "../utils/log/Logger";
 import { SignaleLogger } from "../utils/log/impl/SignaleLogger";
-import { App } from "../App";
+import { Test } from "../test/Test";
 import {InspectProvider} from "../provider/inspect/InspectProvider";
 import {ContainerIdProvider} from "../provider/container_id/ContainerIdProvider";
-import {Cli} from "../Cli";
-import { Lib } from "../Lib";
+import {App} from "../App";
+import { Lib } from "../lib/Lib";
 import { DockerContainerIdProvider } from "../provider/container_id/impl/DockerContainerIdProvider";
 import { DockerInspectProvider } from "../provider/inspect/impl/DockerInspectProvider";
 import { ContainersProcessor } from "../manager/containers_processor/ContainersProcessor";
@@ -19,12 +19,12 @@ import {SlackConsumer} from "../model/consumer/impl/SlackConsumer";
 const container = new Container();
 
 container
-    .bind<App>(TYPES.App)
-    .to(App)
+    .bind<Test>(TYPES.Test)
+    .to(Test)
     .inSingletonScope();
 container
-    .bind<Cli>(TYPES.Cli)
-    .to(Cli)
+    .bind<App>(TYPES.App)
+    .to(App)
     .inSingletonScope();
 container
     .bind<Lib>(TYPES.Lib)

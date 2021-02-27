@@ -3,15 +3,15 @@
 import "reflect-metadata";
 import container from "./di/container";
 import TYPES from "./di/types";
-import {Cli} from "./Cli";
+import {App} from "./App";
 import {Logger} from "./utils/log/Logger";
 import {NoOpLogger} from "./utils/log/impl/NoOpLogger";
 import {ConsoleLogger} from "./utils/log/impl/ConsoleLogger";
 
-async function startCli(): Promise<Cli> {
+async function start(): Promise<App> {
     container.bind<Logger>(TYPES.Logger).to(ConsoleLogger);
 
-    const cli = container.get<Cli>(TYPES.Cli);
+    const cli = container.get<App>(TYPES.App);
     const started = await cli.start();
     return started ? cli : undefined;
 }
@@ -19,7 +19,7 @@ async function startCli(): Promise<Cli> {
 (async () => {
     let app;
     try {
-        app = await startCli();
+        app = await start();
     } catch (err) {
         const msg = "Cannot start application";
         if (app) {

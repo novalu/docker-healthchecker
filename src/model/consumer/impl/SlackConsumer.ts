@@ -1,7 +1,7 @@
 import {inject, injectable} from "inversify";
 import TYPES from "../../../di/types";
 import {Logger} from "../../../utils/log/Logger";
-import {IncomingWebhook} from "@slack/webhook";
+import {IncomingWebhook} from "@slack/client";
 import { Container } from "../../container/Container";
 import * as lodash from "lodash";
 import { Consumer } from "../Consumer";

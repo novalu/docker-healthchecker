@@ -4,7 +4,7 @@ class ContainerState {
     public static readonly RUNNING_HEALTHY =
         new ContainerState(2, "healthy", "#2EB886"); // container is running and health is: healthy
     public static readonly RUNNING_UNHEALTHY =
-        new ContainerState(3, "unhealthy", "#FF4454");// container is running and health is: starting
+        new ContainerState(3, "unhealthy", "#FF4454"); // container is running and health is: starting
     public static readonly DOWN =
         new ContainerState(4, "down", "#FF4454"); // container is not running
     public static readonly RUNNING_UNKNOWN =

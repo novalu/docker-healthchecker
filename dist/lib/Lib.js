@@ -24,58 +24,32 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SlackConsumer = void 0;
+exports.Lib = void 0;
 const inversify_1 = require("inversify");
-const types_1 = __importDefault(require("../../../di/types"));
-const client_1 = require("@slack/client");
-const SlackConsumerOptions_1 = require("../../consumer_options/impl/SlackConsumerOptions");
-let SlackConsumer = class SlackConsumer {
-    constructor(logger) {
+const types_1 = __importDefault(require("../di/types"));
+const ContainersProcessor_1 = require("../manager/containers_processor/ContainersProcessor");
+const ContainerStateMonitor_1 = require("../manager/container_state_monitor/ContainerStateMonitor");
+let Lib = class Lib {
+    constructor(containersProcessor, containerStateMonitor, logger) {
+        this.containersProcessor = containersProcessor;
+        this.containerStateMonitor = containerStateMonitor;
         this.logger = logger;
     }
-    createFields(container) {
-        const fields = [];
-        fields.push({
-            title: "Image",
-            value: container.alias,
-            short: true
-        });
-        fields.push({
-            title: "State",
-            value: `container is ${container.state.text}`,
-            short: true
-        });
-        return fields;
-    }
-    createAttachments(containers) {
-        const attachments = [];
-        for (const container of containers) {
-            attachments.push({
-                fields: this.createFields(container),
-                color: container.state.color
-            });
-        }
-        return attachments;
-    }
-    consume(containers, consumerOptions) {
+    check(configuration) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!(consumerOptions instanceof SlackConsumerOptions_1.SlackConsumerOptions)) {
-                throw new Error("Message config is not Slack message config");
-            }
-            const slackConfig = consumerOptions;
-            const webhook = new client_1.IncomingWebhook(slackConfig.webhook);
-            yield webhook.send({
-                text: "Container status",
-                attachments: this.createAttachments(containers)
-            });
-            this.logger.info("Message sent");
+            const containers = yield this.containersProcessor.process(configuration);
+            yield this.containerStateMonitor.processState(containers, configuration);
+            return containers;
         });
     }
 };
-SlackConsumer = __decorate([
+Lib = __decorate([
     inversify_1.injectable(),
-    __param(0, inversify_1.inject(types_1.default.Logger)),
-    __metadata("design:paramtypes", [Object])
-], SlackConsumer);
-exports.SlackConsumer = SlackConsumer;
-//# sourceMappingURL=SlackConsumer.js.map
+    __param(0, inversify_1.inject(types_1.default.ContainersProcessor)),
+    __param(1, inversify_1.inject(types_1.default.ContainerStateMonitor)),
+    __param(2, inversify_1.inject(types_1.default.Logger)),
+    __metadata("design:paramtypes", [ContainersProcessor_1.ContainersProcessor,
+        ContainerStateMonitor_1.ContainerStateMonitor, Object])
+], Lib);
+exports.Lib = Lib;
+//# sourceMappingURL=Lib.js.map

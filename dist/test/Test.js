@@ -24,58 +24,38 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SlackConsumer = void 0;
+exports.Test = void 0;
 const inversify_1 = require("inversify");
-const types_1 = __importDefault(require("../../../di/types"));
-const client_1 = require("@slack/client");
-const SlackConsumerOptions_1 = require("../../consumer_options/impl/SlackConsumerOptions");
-let SlackConsumer = class SlackConsumer {
-    constructor(logger) {
+const types_1 = __importDefault(require("../di/types"));
+const ContainerStateMonitor_1 = require("../manager/container_state_monitor/ContainerStateMonitor");
+const ContainersProcessor_1 = require("../manager/containers_processor/ContainersProcessor");
+let Test = class Test {
+    constructor(containerStateMonitor, containerIdProvider, inspectProvider, containersProcessor, logger) {
+        this.containerStateMonitor = containerStateMonitor;
+        this.containerIdProvider = containerIdProvider;
+        this.inspectProvider = inspectProvider;
+        this.containersProcessor = containersProcessor;
         this.logger = logger;
     }
-    createFields(container) {
-        const fields = [];
-        fields.push({
-            title: "Image",
-            value: container.alias,
-            short: true
-        });
-        fields.push({
-            title: "State",
-            value: `container is ${container.state.text}`,
-            short: true
-        });
-        return fields;
-    }
-    createAttachments(containers) {
-        const attachments = [];
-        for (const container of containers) {
-            attachments.push({
-                fields: this.createFields(container),
-                color: container.state.color
-            });
-        }
-        return attachments;
-    }
-    consume(containers, consumerOptions) {
+    start(configuration) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!(consumerOptions instanceof SlackConsumerOptions_1.SlackConsumerOptions)) {
-                throw new Error("Message config is not Slack message config");
-            }
-            const slackConfig = consumerOptions;
-            const webhook = new client_1.IncomingWebhook(slackConfig.webhook);
-            yield webhook.send({
-                text: "Container status",
-                attachments: this.createAttachments(containers)
-            });
-            this.logger.info("Message sent");
+            const containers = yield this.containersProcessor.process(configuration);
+            this.containerStateMonitor.processState(containers, configuration);
+            //const containerId = await this.containerIdProvider.getContainerIdByImage("test:latest");
+            //this.logger.info(containerId);
+            //await this.inspectProvider.getInspectForId("17fba8182cbb");
+            return true;
         });
     }
 };
-SlackConsumer = __decorate([
+Test = __decorate([
     inversify_1.injectable(),
-    __param(0, inversify_1.inject(types_1.default.Logger)),
-    __metadata("design:paramtypes", [Object])
-], SlackConsumer);
-exports.SlackConsumer = SlackConsumer;
-//# sourceMappingURL=SlackConsumer.js.map
+    __param(0, inversify_1.inject(types_1.default.ContainerStateMonitor)),
+    __param(1, inversify_1.inject(types_1.default.ContainerIdProvider)),
+    __param(2, inversify_1.inject(types_1.default.InspectProvider)),
+    __param(3, inversify_1.inject(types_1.default.ContainersProcessor)),
+    __param(4, inversify_1.inject(types_1.default.Logger)),
+    __metadata("design:paramtypes", [ContainerStateMonitor_1.ContainerStateMonitor, Object, Object, ContainersProcessor_1.ContainersProcessor, Object])
+], Test);
+exports.Test = Test;
+//# sourceMappingURL=Test.js.map

@@ -5,9 +5,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const inversify_1 = require("inversify");
 const types_1 = __importDefault(require("./types"));
+const Test_1 = require("../test/Test");
 const App_1 = require("../App");
-const Cli_1 = require("../Cli");
-const Lib_1 = require("../Lib");
+const Lib_1 = require("../lib/Lib");
 const DockerContainerIdProvider_1 = require("../provider/container_id/impl/DockerContainerIdProvider");
 const DockerInspectProvider_1 = require("../provider/inspect/impl/DockerInspectProvider");
 const ContainersProcessor_1 = require("../manager/containers_processor/ContainersProcessor");
@@ -18,12 +18,12 @@ const LoggerConsumer_1 = require("../model/consumer/impl/LoggerConsumer");
 const SlackConsumer_1 = require("../model/consumer/impl/SlackConsumer");
 const container = new inversify_1.Container();
 container
-    .bind(types_1.default.App)
-    .to(App_1.App)
+    .bind(types_1.default.Test)
+    .to(Test_1.Test)
     .inSingletonScope();
 container
-    .bind(types_1.default.Cli)
-    .to(Cli_1.Cli)
+    .bind(types_1.default.App)
+    .to(App_1.App)
     .inSingletonScope();
 container
     .bind(types_1.default.Lib)

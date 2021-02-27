@@ -1,6 +1,6 @@
 const TYPES = {
+    Test: Symbol("Test"),
     App: Symbol("App"),
-    Cli: Symbol("Cli"),
     Lib: Symbol("Lib"),
 
     ContainerIdProvider: Symbol("ContainerIdProvider"),

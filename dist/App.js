@@ -25,25 +25,73 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.App = void 0;
+const yargs_1 = __importDefault(require("yargs"));
 const inversify_1 = require("inversify");
 const types_1 = __importDefault(require("./di/types"));
 const ContainerStateMonitor_1 = require("./manager/container_state_monitor/ContainerStateMonitor");
 const ContainersProcessor_1 = require("./manager/containers_processor/ContainersProcessor");
+const lodash_1 = __importDefault(require("lodash"));
+const PlainConfiguration_1 = require("./model/configuration/impl/PlainConfiguration");
+const FileConfiguration_1 = require("./model/configuration/impl/FileConfiguration");
+const ConsoleConsumerOptions_1 = require("./model/consumer_options/impl/ConsoleConsumerOptions");
+const SlackConsumerOptions_1 = require("./model/consumer_options/impl/SlackConsumerOptions");
 let App = class App {
-    constructor(containerStateMonitor, containerIdProvider, inspectProvider, containersProcessor, logger) {
+    constructor(containerStateMonitor, containersProcessor, logger) {
         this.containerStateMonitor = containerStateMonitor;
-        this.containerIdProvider = containerIdProvider;
-        this.inspectProvider = inspectProvider;
         this.containersProcessor = containersProcessor;
         this.logger = logger;
     }
-    start(configuration) {
+    start() {
         return __awaiter(this, void 0, void 0, function* () {
+            const argv = yargs_1.default
+                .help("h")
+                .alias("h", "help")
+                .group("image", "Images:")
+                .alias("i", "image")
+                .describe("image", "Docker image to check. Could be defined more times.")
+                .array("image")
+                .string("image")
+                .describe("images-file", "JSON file with image definition in format [{name: string, image: string, alias: string}, ...]")
+                .string("images-file")
+                .group(["console-enabled", "console-force"], "Console output:")
+                .describe("console-enabled", "Whether program should output to console")
+                .describe("console-force", "Whether program should output even if containers are up")
+                .group(["slack-enabled", "slack-webhook", "slack-force"], "Slack notification:")
+                .describe("slack-enabled", "Whether program should send output to Slack")
+                .describe("slack-webhook", "If slack output is enabled, define the Slack webhook URL")
+                .implies("slack-enabled", "slack-webhook")
+                .nargs("slack-webhook", 1)
+                .describe("slack-force", "Whether program should send output to Slack even if containers are up")
+                .fail((msg, err) => {
+                console.error(msg);
+                process.exit(1);
+            })
+                .argv;
+            // console.log(JSON.stringify(argv));
+            // TODO validate with joi
+            const consumerOptions = [];
+            if (argv.consoleEnabled !== undefined && lodash_1.default.isBoolean(argv.consoleEnabled) && argv.consoleEnabled) {
+                const consoleForce = (argv.consoleForce !== undefined && lodash_1.default.isBoolean(argv.consoleForce)) ? argv.consoleForce : false;
+                consumerOptions.push(new ConsoleConsumerOptions_1.ConsoleConsumerOptions(consoleForce));
+            }
+            if (argv.slackEnabled !== undefined && lodash_1.default.isBoolean(argv.slackEnabled) && argv.slackEnabled) {
+                const slackWebhook = argv.slackWebhook;
+                const slackForce = (argv.slackForce !== undefined && lodash_1.default.isBoolean(argv.slackForce)) ? argv.slackForce : false;
+                consumerOptions.push(new SlackConsumerOptions_1.SlackConsumerOptions(slackWebhook, slackForce));
+            }
+            let configuration = undefined;
+            if (argv.image !== undefined) {
+                configuration = new PlainConfiguration_1.PlainConfiguration(argv.image, consumerOptions);
+            }
+            else if (argv.imagesFile !== undefined) {
+                configuration = new FileConfiguration_1.FileConfiguration(argv.imagesFile, consumerOptions);
+            }
+            else {
+                console.log("Image or imagesFile parameter should be provided.");
+                return;
+            }
             const containers = yield this.containersProcessor.process(configuration);
-            this.containerStateMonitor.processState(containers, configuration);
-            //const containerId = await this.containerIdProvider.getContainerIdByImage("test:latest");
-            //this.logger.info(containerId);
-            //await this.inspectProvider.getInspectForId("17fba8182cbb");
+            yield this.containerStateMonitor.processState(containers, configuration);
             return true;
         });
     }
@@ -51,11 +99,10 @@ let App = class App {
 App = __decorate([
     inversify_1.injectable(),
     __param(0, inversify_1.inject(types_1.default.ContainerStateMonitor)),
-    __param(1, inversify_1.inject(types_1.default.ContainerIdProvider)),
-    __param(2, inversify_1.inject(types_1.default.InspectProvider)),
-    __param(3, inversify_1.inject(types_1.default.ContainersProcessor)),
-    __param(4, inversify_1.inject(types_1.default.Logger)),
-    __metadata("design:paramtypes", [ContainerStateMonitor_1.ContainerStateMonitor, Object, Object, ContainersProcessor_1.ContainersProcessor, Object])
+    __param(1, inversify_1.inject(types_1.default.ContainersProcessor)),
+    __param(2, inversify_1.inject(types_1.default.Logger)),
+    __metadata("design:paramtypes", [ContainerStateMonitor_1.ContainerStateMonitor,
+        ContainersProcessor_1.ContainersProcessor, Object])
 ], App);
 exports.App = App;
 //# sourceMappingURL=App.js.map
