@@ -22,7 +22,7 @@ class DockerInspectProvider implements InspectProvider {
                 return result.stdout;
             }
         } catch (err) {
-            this.logger.warn("Cannot get inspect (err)");
+            this.logger.warn("Cannot get inspect (err)", err);
         }
         return undefined;
     }

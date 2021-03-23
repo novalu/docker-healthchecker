@@ -46,7 +46,7 @@ let DockerInspectProvider = class DockerInspectProvider {
                 }
             }
             catch (err) {
-                this.logger.warn("Cannot get inspect (err)");
+                this.logger.warn("Cannot get inspect (err)", err);
             }
             return undefined;
         });
