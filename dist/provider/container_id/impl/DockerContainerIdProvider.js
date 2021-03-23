@@ -22,7 +22,7 @@ let DockerContainerIdProvider = class DockerContainerIdProvider {
     getContainerIdByImage(image) {
         return __awaiter(this, void 0, void 0, function* () {
             const execShPromise = execSh.promise;
-            const result = yield execShPromise(`docker ps | grep '${image}' | awk '{ print $1 }'`, true);
+            const result = yield execShPromise(`docker ps | awk '$2=="${image}"' | awk '{ print $1 }'`, true);
             const out = result.stdout.trim();
             return out === "" ? undefined : out;
         });

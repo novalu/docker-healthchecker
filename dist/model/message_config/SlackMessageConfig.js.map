@@ -1,1 +1,0 @@
-{"version":3,"file":"SlackMessageConfig.js","sourceRoot":"","sources":["../../../src/model/message_config/SlackMessageConfig.ts"],"names":[],"mappings":";;AAAA,mDAA8C;AAE9C,MAAM,kBAAmB,SAAQ,6BAAa;IAE1C,YACW,OAAe,EACf,KAAa;QAEpB,KAAK,EAAE,CAAC;QAHD,YAAO,GAAP,OAAO,CAAQ;QACf,UAAK,GAAL,KAAK,CAAQ;IAGxB,CAAC;CAEJ;AAEQ,gDAAkB"}
