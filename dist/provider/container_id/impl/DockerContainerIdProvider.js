@@ -22,7 +22,7 @@ let DockerContainerIdProvider = class DockerContainerIdProvider {
     getContainerIdByImage(image) {
         return __awaiter(this, void 0, void 0, function* () {
             const execShPromise = execSh.promise;
-            const result = yield execShPromise(`docker ps | awk '$2=="${image}"' | awk '{ print $1 }'`, true);
+            const result = yield execShPromise(`docker ps -a | awk '$2=="${image}"' | awk '{ print $1 }'`, true);
             const out = result.stdout.trim();
             return out === "" ? undefined : out;
         });
@@ -30,7 +30,7 @@ let DockerContainerIdProvider = class DockerContainerIdProvider {
     getContainerIdByName(name) {
         return __awaiter(this, void 0, void 0, function* () {
             const execShPromise = execSh.promise;
-            const result = yield execShPromise(`docker ps -aqf "name=${name}"`, true);
+            const result = yield execShPromise(`docker ps -a --format "table {{.ID}} {{.Names}}" | awk '$2=="${name}"' | awk '{ print $1 }`, true);
             const out = result.stdout.trim();
             return out === "" ? undefined : out;
         });
