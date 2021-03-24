@@ -7,9 +7,10 @@ import {App} from "./App";
 import {Logger} from "./utils/log/Logger";
 import {NoOpLogger} from "./utils/log/impl/NoOpLogger";
 import {ConsoleLogger} from "./utils/log/impl/ConsoleLogger";
+import {SignaleLogger} from "./utils/log/impl/SignaleLogger";
 
 async function start(): Promise<App> {
-    container.bind<Logger>(TYPES.Logger).to(ConsoleLogger);
+    container.bind<Logger>(TYPES.Logger).to(SignaleLogger);
 
     const cli = container.get<App>(TYPES.App);
     const started = await cli.start();
