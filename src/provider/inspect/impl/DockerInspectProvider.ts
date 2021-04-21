@@ -1,4 +1,4 @@
-import execSh = require("exec-sh");
+import execSh from "exec-sh";
 import {inject, injectable} from "inversify";
 import { InspectProvider } from "../InspectProvider";
 import TYPES from "../../../di/types";

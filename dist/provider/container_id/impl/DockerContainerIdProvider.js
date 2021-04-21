@@ -14,14 +14,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DockerContainerIdProvider = void 0;
 const inversify_1 = require("inversify");
-const execSh = require("exec-sh");
+const exec_sh_1 = __importDefault(require("exec-sh"));
 let DockerContainerIdProvider = class DockerContainerIdProvider {
     getContainerIdByImage(image) {
         return __awaiter(this, void 0, void 0, function* () {
-            const execShPromise = execSh.promise;
+            const execShPromise = exec_sh_1.default.promise;
             const result = yield execShPromise(`docker ps -a | awk '$2=="${image}"' | awk '{ print $1 }'`, true);
             const out = result.stdout.trim();
             return out === "" ? undefined : out;
@@ -29,7 +32,7 @@ let DockerContainerIdProvider = class DockerContainerIdProvider {
     }
     getContainerIdByName(name) {
         return __awaiter(this, void 0, void 0, function* () {
-            const execShPromise = execSh.promise;
+            const execShPromise = exec_sh_1.default.promise;
             const result = yield execShPromise(`docker ps -a --format "table {{.ID}} {{.Names}}" | awk '$2=="${name}"' | awk '{ print $1 }'`, true);
             const out = result.stdout.trim();
             return out === "" ? undefined : out;

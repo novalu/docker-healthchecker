@@ -27,10 +27,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.App = void 0;
 const yargs_1 = __importDefault(require("yargs"));
 const inversify_1 = require("inversify");
+const joi_1 = __importDefault(require("joi"));
 const types_1 = __importDefault(require("./di/types"));
 const ContainerStateMonitor_1 = require("./manager/container_state_monitor/ContainerStateMonitor");
 const ContainersProcessor_1 = require("./manager/containers_processor/ContainersProcessor");
-const lodash_1 = __importDefault(require("lodash"));
 const PlainConfiguration_1 = require("./model/configuration/impl/PlainConfiguration");
 const FileConfiguration_1 = require("./model/configuration/impl/FileConfiguration");
 const ConsoleConsumerOptions_1 = require("./model/consumer_options/impl/ConsoleConsumerOptions");
@@ -46,50 +46,86 @@ let App = class App {
             const argv = yargs_1.default
                 .help("h")
                 .alias("h", "help")
-                .group(["image", "file"], "Images:")
-                .alias("i", "image")
-                .describe("image", "Docker image to check. Could be defined more times.")
-                .array("image")
-                .string("image")
-                .alias("f", "file")
-                .describe("file", "JSON file with image definition in format [{name: string, image: string, alias: string}, ...], where there should be at least name or image. Alias is optional.")
-                .string("file")
-                .group(["console", "console-force"], "Console output:")
-                .describe("console", "Whether program should output to console")
-                .describe("console-force", "Whether program should output even if containers are up")
-                .group(["slack", "slack-webhook", "slack-force"], "Slack notification:")
-                .describe("slack", "Whether program should send output to Slack")
-                .describe("slack-webhook", "If slack output is enabled, define the Slack webhook URL")
-                .implies("slack", "slack-webhook")
-                .nargs("slack-webhook", 1)
-                .describe("slack-force", "Whether program should send output to Slack even if containers are up")
+                .group(["image", "file"], "Definition:")
+                .options({
+                i: {
+                    alias: "image",
+                    describe: "Docker image to check. Could be defined more times.",
+                    array: true,
+                    string: true
+                },
+                f: {
+                    alias: "file",
+                    describe: "JSON file with image definition in format [{name: string, image: string, alias: " +
+                        "string}, ...], where there should be at least name or image. Alias is optional.",
+                    type: "string",
+                    nargs: 1
+                }
+            })
+                .group(["console", "slack", "slack-webhook"], "Output:")
+                .options({
+                c: {
+                    alias: "console",
+                    describe: "Whether program should output to console"
+                },
+                s: {
+                    alias: "slack",
+                    describe: "Whether program should send Slack notification"
+                },
+                slackWebhook: {
+                    describe: "If slack output is enabled, define the Slack webhook URL",
+                    nargs: 1
+                },
+                force: {
+                    describe: "Whether program should output even if containers are up"
+                }
+            })
                 .fail((msg, err) => {
-                console.error(msg);
+                this.logger.error("Failed validate CLI parameters", err);
                 process.exit(1);
             })
                 .argv;
-            // console.log(JSON.stringify(argv));
-            // TODO validate with joi
+            this.logger.debug("Yargs:");
+            this.logger.debug(JSON.stringify(argv));
+            const schema = joi_1.default.object({
+                image: joi_1.default.array().items(joi_1.default.string()),
+                file: joi_1.default.string(),
+                force: joi_1.default.bool().default(false),
+                console: joi_1.default.bool().default(false),
+                slack: joi_1.default.bool().default(false),
+                slackWebhook: joi_1.default.string().default("").uri().when("slack", { is: true, then: joi_1.default.required() })
+            });
+            const options = schema.validate(argv, { allowUnknown: true });
+            if (options.error) {
+                this.logger.error("Failed validate CLI parameters", options.error);
+                process.exit(1);
+            }
+            const image = options.value.image;
+            const file = options.value.file;
+            const force = options.value.force;
+            const consoleVal = options.value.console;
+            const slack = options.value.slack;
+            const slackWebhook = options.value.slackWebhook;
+            this.logger.debug("Joi:");
+            this.logger.debug(JSON.stringify({ image, file, force, console: consoleVal, slack, slackWebhook }));
+            if ((!image && !file) || (image && file)) {
+                this.logger.error("Only one of image and file should be provided");
+            }
+            if (!consoleVal && !slack) {
+                this.logger.error("Console or Slack output should be provided");
+            }
+            return;
             const consumerOptions = [];
-            if (argv.console !== undefined && lodash_1.default.isBoolean(argv.console) && argv.console) {
-                const consoleForce = (argv.consoleForce !== undefined && lodash_1.default.isBoolean(argv.consoleForce)) ? argv.consoleForce : false;
-                consumerOptions.push(new ConsoleConsumerOptions_1.ConsoleConsumerOptions(consoleForce));
-            }
-            if (argv.slack !== undefined && lodash_1.default.isBoolean(argv.slack) && argv.slack) {
-                const slackWebhook = argv.slackWebhook;
-                const slackForce = (argv.slackForce !== undefined && lodash_1.default.isBoolean(argv.slackForce)) ? argv.slackForce : false;
-                consumerOptions.push(new SlackConsumerOptions_1.SlackConsumerOptions(slackWebhook, slackForce));
-            }
+            if (consoleVal)
+                consumerOptions.push(new ConsoleConsumerOptions_1.ConsoleConsumerOptions(force));
+            if (slack)
+                consumerOptions.push(new SlackConsumerOptions_1.SlackConsumerOptions(slackWebhook, force));
             let configuration;
-            if (argv.image !== undefined) {
-                configuration = new PlainConfiguration_1.PlainConfiguration(argv.image, consumerOptions);
+            if (image.length > 0) {
+                configuration = new PlainConfiguration_1.PlainConfiguration(image, consumerOptions);
             }
-            else if (argv.file !== undefined) {
-                configuration = new FileConfiguration_1.FileConfiguration(argv.file, consumerOptions);
-            }
-            else {
-                console.log("Image or file parameter should be provided.");
-                return;
+            else if (file) {
+                configuration = new FileConfiguration_1.FileConfiguration(file, consumerOptions);
             }
             const containers = yield this.containersProcessor.process(configuration);
             yield this.containerStateMonitor.processState(containers, configuration);

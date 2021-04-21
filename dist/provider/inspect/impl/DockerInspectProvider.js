@@ -25,7 +25,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DockerInspectProvider = void 0;
-const execSh = require("exec-sh");
+const exec_sh_1 = __importDefault(require("exec-sh"));
 const inversify_1 = require("inversify");
 const types_1 = __importDefault(require("../../../di/types"));
 let DockerInspectProvider = class DockerInspectProvider {
@@ -34,7 +34,7 @@ let DockerInspectProvider = class DockerInspectProvider {
     }
     getInspectForId(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const execShPromise = execSh.promise;
+            const execShPromise = exec_sh_1.default.promise;
             let result;
             try {
                 result = yield execShPromise(`docker inspect ${id}`, true);

@@ -1,5 +1,5 @@
 import {injectable} from "inversify";
-import execSh = require("exec-sh");
+import execSh from "exec-sh";
 import { ContainerIdProvider } from "../ContainerIdProvider";
 
 @injectable()
