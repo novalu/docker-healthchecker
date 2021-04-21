@@ -3,7 +3,7 @@ import {Container} from "../../model/container/Container";
 import TYPES from "../../di/types";
 import * as fs from "fs-extra";
 import validator from "validator";
-import Joi from "@hapi/joi";
+import Joi from "joi";
 import {Logger} from "../../utils/log/Logger";
 import path from "path";
 import { ContainerFinder } from "../container_finder/ContainerFinder";
