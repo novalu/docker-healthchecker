@@ -1,9 +1,10 @@
 class ContainerDefinition {
-    constructor(
-        public alias: string,
-        public image: string,
-        public name: string
-    ) {}
+  constructor(
+    public alias: string,
+    public image: string,
+    public name: string
+  ) {
+  }
 }
 
-export { ContainerDefinition }
+export {ContainerDefinition}

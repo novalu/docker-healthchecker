@@ -1,7 +1,9 @@
 declare class ContainerDefinition {
-    alias: string;
-    image: string;
-    name: string;
-    constructor(alias: string, image: string, name: string);
+  alias: string;
+  image: string;
+  name: string;
+
+  constructor(alias: string, image: string, name: string);
 }
-export { ContainerDefinition };
+
+export {ContainerDefinition};

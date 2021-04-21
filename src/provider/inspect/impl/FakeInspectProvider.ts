@@ -1,15 +1,14 @@
 import {injectable} from "inversify";
-import { InspectProvider } from "../InspectProvider";
+import {InspectProvider} from "../InspectProvider";
 
 @injectable()
 class FakeInspectProvider implements InspectProvider {
 
-    constructor(
+  constructor() {
+  }
 
-    ) {}
-
-    async getInspectForId(id: string): Promise<string> {
-        return `[
+  async getInspectForId(id: string): Promise<string> {
+    return `[
     {
         "Id": "43eeb2265daa216958b94309065c68732dd29698ec39cc0d21f5db80278e4407",
         "Created": "2019-11-12T11:27:55.61512168Z",
@@ -308,8 +307,8 @@ class FakeInspectProvider implements InspectProvider {
         }
     }
 ]`;
-    }
+  }
 
 }
 
-export { FakeInspectProvider }
+export {FakeInspectProvider}

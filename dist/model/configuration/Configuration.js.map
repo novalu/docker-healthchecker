@@ -1,1 +1,10 @@
-{"version":3,"file":"Configuration.js","sourceRoot":"","sources":["../../../src/model/configuration/Configuration.ts"],"names":[],"mappings":";;;AAEA,MAAM,aAAa;IAIf,YACW,IAAY,EACZ,eAAkC;QADlC,SAAI,GAAJ,IAAI,CAAQ;QACZ,oBAAe,GAAf,eAAe,CAAmB;IAC1C,CAAC;;AAGC,sCAAa;AATK,wBAAU,GAAG,CAAC,CAAC;AACf,uBAAS,GAAG,CAAC,CAAC"}
+{
+  "version": 3,
+  "file": "Configuration.js",
+  "sourceRoot": "",
+  "sources": [
+    "../../../src/model/configuration/Configuration.ts"
+  ],
+  "names": [],
+  "mappings": ";;;AAEA,MAAM,aAAa;IAIf,YACW,IAAY,EACZ,eAAkC;QADlC,SAAI,GAAJ,IAAI,CAAQ;QACZ,oBAAe,GAAf,eAAe,CAAmB;IAC1C,CAAC;;AAGC,sCAAa;AATK,wBAAU,GAAG,CAAC,CAAC;AACf,uBAAS,GAAG,CAAC,CAAC"
+}

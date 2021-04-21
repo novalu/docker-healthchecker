@@ -1,1 +1,10 @@
-{"version":3,"file":"ConsoleConsumerOptions.js","sourceRoot":"","sources":["../../../../src/model/consumer_options/impl/ConsoleConsumerOptions.ts"],"names":[],"mappings":";;;AAAA,wDAAmD;AAEnD,MAAa,sBAAuB,SAAQ,iCAAe;IAA3D;;QACI,SAAI,GAAG,iCAAe,CAAC,qBAAqB,CAAC;IACjD,CAAC;CAAA;AAFD,wDAEC"}
+{
+  "version": 3,
+  "file": "ConsoleConsumerOptions.js",
+  "sourceRoot": "",
+  "sources": [
+    "../../../../src/model/consumer_options/impl/ConsoleConsumerOptions.ts"
+  ],
+  "names": [],
+  "mappings": ";;;AAAA,wDAAmD;AAEnD,MAAa,sBAAuB,SAAQ,iCAAe;IAA3D;;QACI,SAAI,GAAG,iCAAe,CAAC,qBAAqB,CAAC;IACjD,CAAC;CAAA;AAFD,wDAEC"
+}

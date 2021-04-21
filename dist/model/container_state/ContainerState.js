@@ -1,13 +1,15 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+Object.defineProperty(exports, "__esModule", {value: true});
 exports.ContainerState = void 0;
+
 class ContainerState {
-    constructor(id, text, color) {
-        this.id = id;
-        this.text = text;
-        this.color = color;
-    }
+  constructor(id, text, color) {
+    this.id = id;
+    this.text = text;
+    this.color = color;
+  }
 }
+
 exports.ContainerState = ContainerState;
 ContainerState.RUNNING_STARTING = new ContainerState(1, "starting", "#000000"); // container is running and health is: unhealthy
 ContainerState.RUNNING_HEALTHY = new ContainerState(2, "healthy", "#2EB886"); // container is running and health is: healthy

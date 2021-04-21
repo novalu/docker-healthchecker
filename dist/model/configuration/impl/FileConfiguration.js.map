@@ -1,1 +1,10 @@
-{"version":3,"file":"FileConfiguration.js","sourceRoot":"","sources":["../../../../src/model/configuration/impl/FileConfiguration.ts"],"names":[],"mappings":";;;AAAA,oDAA+C;AAG/C,MAAa,iBAAkB,SAAQ,6BAAa;IAChD,YACW,QAAgB,EACvB,eAAkC;QAElC,KAAK,CAAC,6BAAa,CAAC,SAAS,EAAE,eAAe,CAAC,CAAC;QAHzC,aAAQ,GAAR,QAAQ,CAAQ;IAI3B,CAAC;CACJ;AAPD,8CAOC"}
+{
+  "version": 3,
+  "file": "FileConfiguration.js",
+  "sourceRoot": "",
+  "sources": [
+    "../../../../src/model/configuration/impl/FileConfiguration.ts"
+  ],
+  "names": [],
+  "mappings": ";;;AAAA,oDAA+C;AAG/C,MAAa,iBAAkB,SAAQ,6BAAa;IAChD,YACW,QAAgB,EACvB,eAAkC;QAElC,KAAK,CAAC,6BAAa,CAAC,SAAS,EAAE,eAAe,CAAC,CAAC;QAHzC,aAAQ,GAAR,QAAQ,CAAQ;IAI3B,CAAC;CACJ;AAPD,8CAOC"
+}

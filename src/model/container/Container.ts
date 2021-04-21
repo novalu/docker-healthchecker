@@ -1,15 +1,16 @@
 import moment from "moment";
-import { ContainerState } from "../container_state/ContainerState";
+import {ContainerState} from "../container_state/ContainerState";
 
 class Container {
-    constructor(
-        public id: string,
-        public name: string,
-        public image: string,
-        public alias: string,
-        public state: ContainerState,
-        public startedAt: moment.Moment
-    ) {}
+  constructor(
+    public id: string,
+    public name: string,
+    public image: string,
+    public alias: string,
+    public state: ContainerState,
+    public startedAt: moment.Moment
+  ) {
+  }
 }
 
-export { Container }
+export {Container}

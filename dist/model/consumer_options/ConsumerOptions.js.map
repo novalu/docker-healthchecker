@@ -1,1 +1,10 @@
-{"version":3,"file":"ConsumerOptions.js","sourceRoot":"","sources":["../../../src/model/consumer_options/ConsumerOptions.ts"],"names":[],"mappings":";;;AAAA,MAAe,eAAe;IAO1B,YACW,KAAc;QAAd,UAAK,GAAL,KAAK,CAAS;IACtB,CAAC;;AAGC,0CAAe;AAXG,qCAAqB,GAAG,CAAC,CAAC;AAC1B,oCAAoB,GAAG,CAAC,CAAC;AACzB,mCAAmB,GAAG,CAAC,CAAC"}
+{
+  "version": 3,
+  "file": "ConsumerOptions.js",
+  "sourceRoot": "",
+  "sources": [
+    "../../../src/model/consumer_options/ConsumerOptions.ts"
+  ],
+  "names": [],
+  "mappings": ";;;AAAA,MAAe,eAAe;IAO1B,YACW,KAAc;QAAd,UAAK,GAAL,KAAK,CAAS;IACtB,CAAC;;AAGC,0CAAe;AAXG,qCAAqB,GAAG,CAAC,CAAC;AAC1B,oCAAoB,GAAG,CAAC,CAAC;AACzB,mCAAmB,GAAG,CAAC,CAAC"
+}

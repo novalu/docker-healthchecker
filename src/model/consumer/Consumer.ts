@@ -1,8 +1,8 @@
-import { Container } from "../container/Container";
+import {Container} from "../container/Container";
 import {ConsumerOptions} from "../consumer_options/ConsumerOptions";
 
 interface Consumer {
-    consume(containers: Container[], options: ConsumerOptions);
+  consume(containers: Container[], options: ConsumerOptions);
 }
 
-export { Consumer }
+export {Consumer}

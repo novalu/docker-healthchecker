@@ -1,11 +1,13 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+Object.defineProperty(exports, "__esModule", {value: true});
 exports.ConsumerOptions = void 0;
+
 class ConsumerOptions {
-    constructor(force) {
-        this.force = force;
-    }
+  constructor(force) {
+    this.force = force;
+  }
 }
+
 exports.ConsumerOptions = ConsumerOptions;
 ConsumerOptions.CONSUMER_TYPE_CONSOLE = 1;
 ConsumerOptions.CONSUMER_TYPE_LOGGER = 2;
