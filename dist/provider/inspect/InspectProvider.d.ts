@@ -1,5 +1,4 @@
 interface InspectProvider {
-  getInspectForId(id: string): Promise<string>;
+    getInspectForId(id: string): Promise<string>;
 }
-
-export {InspectProvider};
+export { InspectProvider };

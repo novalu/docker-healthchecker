@@ -1,10 +1,1 @@
-{
-  "version": 3,
-  "file": "ContainerDefinition.js",
-  "sourceRoot": "",
-  "sources": [
-    "../../../src/model/container_definition/ContainerDefinition.ts"
-  ],
-  "names": [],
-  "mappings": ";;;AAAA,MAAM,mBAAmB;IACrB,YACW,KAAa,EACb,KAAa,EACb,IAAY;QAFZ,UAAK,GAAL,KAAK,CAAQ;QACb,UAAK,GAAL,KAAK,CAAQ;QACb,SAAI,GAAJ,IAAI,CAAQ;IACpB,CAAC;CACP;AAEQ,kDAAmB"
-}
+{"version":3,"file":"ContainerDefinition.js","sourceRoot":"","sources":["../../../src/model/container_definition/ContainerDefinition.ts"],"names":[],"mappings":";;;AAAA,MAAM,mBAAmB;IACvB,YACS,KAAa,EACb,KAAa,EACb,IAAY;QAFZ,UAAK,GAAL,KAAK,CAAQ;QACb,UAAK,GAAL,KAAK,CAAQ;QACb,SAAI,GAAJ,IAAI,CAAQ;IAErB,CAAC;CACF;AAEO,kDAAmB"}

@@ -1,10 +1,1 @@
-{
-  "version": 3,
-  "file": "SlackConsumerOptions.js",
-  "sourceRoot": "",
-  "sources": [
-    "../../../../src/model/consumer_options/impl/SlackConsumerOptions.ts"
-  ],
-  "names": [],
-  "mappings": ";;;AAAA,wDAAmD;AAEnD,MAAa,oBAAqB,SAAQ,iCAAe;IAGrD,YACW,OAAe,EACtB,KAAc;QAEd,KAAK,CAAC,KAAK,CAAC,CAAC;QAHN,YAAO,GAAP,OAAO,CAAQ;QAH1B,SAAI,GAAG,iCAAe,CAAC,mBAAmB,CAAC;IAO3C,CAAC;CAEJ;AAVD,oDAUC"
-}
+{"version":3,"file":"SlackConsumerOptions.js","sourceRoot":"","sources":["../../../../src/model/consumer_options/impl/SlackConsumerOptions.ts"],"names":[],"mappings":";;;AAAA,wDAAmD;AAEnD,MAAa,oBAAqB,SAAQ,iCAAe;IAGvD,YACS,OAAe,EACtB,KAAc;QAEd,KAAK,CAAC,KAAK,CAAC,CAAC;QAHN,YAAO,GAAP,OAAO,CAAQ;QAHxB,SAAI,GAAG,iCAAe,CAAC,mBAAmB,CAAC;IAO3C,CAAC;CAEF;AAVD,oDAUC"}
