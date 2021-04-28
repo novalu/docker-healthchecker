@@ -85,8 +85,8 @@ let App = class App {
                 process.exit(1);
             })
                 .argv;
-            this.logger.debug("Yargs:");
-            this.logger.debug(JSON.stringify(argv));
+            // this.logger.debug("Yargs:");
+            // this.logger.debug(JSON.stringify(argv));
             const schema = joi_1.default.object({
                 image: joi_1.default.array().items(joi_1.default.string()),
                 file: joi_1.default.string(),
@@ -106,8 +106,8 @@ let App = class App {
             const consoleVal = options.value.console;
             const slack = options.value.slack;
             const slackWebhook = options.value.slackWebhook;
-            this.logger.debug("Joi:");
-            this.logger.debug(JSON.stringify({ image, file, force, console: consoleVal, slack, slackWebhook }));
+            // this.logger.debug("Joi:");
+            // this.logger.debug(JSON.stringify({image, file, force, console: consoleVal, slack, slackWebhook}));
             if ((!image && !file) || (image && file)) {
                 this.logger.error("Only one of image and file should be provided");
             }
@@ -120,7 +120,7 @@ let App = class App {
             if (slack)
                 consumerOptions.push(new SlackConsumerOptions_1.SlackConsumerOptions(slackWebhook, force));
             let configuration;
-            if (image.length > 0) {
+            if (image !== undefined && image.length > 0) {
                 configuration = new PlainConfiguration_1.PlainConfiguration(image, consumerOptions);
             }
             else if (file) {
