@@ -1,10 +1,1 @@
-{
-  "version": 3,
-  "file": "LoggerConsumerOptions.js",
-  "sourceRoot": "",
-  "sources": [
-    "../../../../src/model/consumer_options/impl/LoggerConsumerOptions.ts"
-  ],
-  "names": [],
-  "mappings": ";;;AAAA,wDAAmD;AAEnD,MAAa,qBAAsB,SAAQ,iCAAe;IAA1D;;QACI,SAAI,GAAG,iCAAe,CAAC,oBAAoB,CAAC;IAChD,CAAC;CAAA;AAFD,sDAEC"
-}
+{"version":3,"file":"LoggerConsumerOptions.js","sourceRoot":"","sources":["../../../../src/model/consumer_options/impl/LoggerConsumerOptions.ts"],"names":[],"mappings":";;;AAAA,wDAAmD;AAEnD,MAAa,qBAAsB,SAAQ,iCAAe;IAA1D;;QACE,SAAI,GAAG,iCAAe,CAAC,oBAAoB,CAAC;IAC9C,CAAC;CAAA;AAFD,sDAEC"}
