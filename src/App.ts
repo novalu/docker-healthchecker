@@ -103,8 +103,6 @@ class App {
       this.logger.error("Console or Slack output should be provided");
     }
 
-    return;
-
     const consumerOptions = [];
     if (consoleVal) consumerOptions.push(new ConsoleConsumerOptions(force))
     if (slack) consumerOptions.push(new SlackConsumerOptions(slackWebhook, force))
