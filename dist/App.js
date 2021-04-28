@@ -114,7 +114,6 @@ let App = class App {
             if (!consoleVal && !slack) {
                 this.logger.error("Console or Slack output should be provided");
             }
-            return;
             const consumerOptions = [];
             if (consoleVal)
                 consumerOptions.push(new ConsoleConsumerOptions_1.ConsoleConsumerOptions(force));
